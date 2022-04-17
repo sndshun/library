@@ -1,51 +1,6 @@
 <template>
   <div class="container">
     <el-row :gutter="30">
-      <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
-
-          <div :span="24" v-for="(item,index) in books.list" :key="index" class="book">
-            <el-card shadow="hover">
-              <div class="book-main">
-                <div class="book-img">
-                  <a :href="item.dataHref" target="_blank"><img :src="item.imgUrl" :alt="item.imgDesc"/></a>
-                </div>
-                <div class="book-content">
-                  <h2 class="pointer">{{ item.title }}</h2>
-                  <h2>{{ item.originTitle }}</h2>
-                  <h3>{{ item.subTitle }}</h3>
-                  <p>{{ item.author }}</p>
-                  <p>{{ item.publisher }}/{{ $filters.formatDate(item.pubdate) }}</p>
-                  <p>{{ item.price }}元</p>
-                  <p>{{ item.likes }}人推荐</p>
-                  <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
-                  <div class="button">
-                    <el-button>借阅</el-button>
-                  </div>
-                </div>
-              </div>
-            </el-card>
-          </div>
-
-        <el-pagination
-            :currentPage="books.current"
-            :page-size="books.size"
-            :page-sizes="[10, 50, 100, 300]"
-            :small="false"
-            :disabled="false"
-            :background="true"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="books.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            style="display: flex;justify-content: flex-end"
-        />
-
-        <el-row>
-          <el-col :span="24">
-          </el-col>
-        </el-row>
-      </el-col>
-
       <el-col :md="8" :lg="8" :xl="8">
         <el-collapse>
           <el-collapse-item title="查询" name="1">
@@ -119,6 +74,52 @@
           </el-collapse-item>
         </el-collapse>
       </el-col>
+
+      <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
+
+          <div :span="24" v-for="(item,index) in books.list" :key="index" class="book">
+            <el-card shadow="hover">
+              <div class="book-main">
+                <div class="book-img">
+                  <a :href="item.dataHref" target="_blank"><img :src="item.imgUrl" :alt="item.imgDesc"/></a>
+                </div>
+                <div class="book-content">
+                  <h2 class="pointer">{{ item.title }}</h2>
+                  <h2>{{ item.originTitle }}</h2>
+                  <h3>{{ item.subTitle }}</h3>
+                  <p>{{ item.author }}</p>
+                  <p>{{ item.publisher }}/{{ $filters.formatDate(item.pubdate) }}</p>
+                  <p>{{ item.price }}元</p>
+                  <p>{{ item.likes }}人推荐</p>
+                  <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
+                  <div class="button">
+                    <el-button>借阅</el-button>
+                  </div>
+                </div>
+              </div>
+            </el-card>
+          </div>
+
+        <el-pagination
+            :currentPage="books.current"
+            :page-size="books.size"
+            :page-sizes="[10, 50, 100, 300]"
+            :small="false"
+            :disabled="false"
+            :background="true"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="books.total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            style="display: flex;justify-content: flex-end"
+        />
+
+        <el-row>
+          <el-col :span="24">
+          </el-col>
+        </el-row>
+      </el-col>
+
 
     </el-row>
   </div>
