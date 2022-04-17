@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.AttachmentMapper">
+
+    <resultMap type="com.sndshun.library.entity.Attachment" id="AttachmentMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="imgName" column="img_name" jdbcType="VARCHAR"/>
+        <result property="suffix" column="suffix" jdbcType="VARCHAR"/>
+        <result property="size" column="size" jdbcType="VARCHAR"/>
+        <result property="imgTitle" column="img_title" jdbcType="VARCHAR"/>
+        <result property="imgDesc" column="img_desc" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="absolutePath" column="absolute_path" jdbcType="VARCHAR"/>
+        <result property="isDelete" column="is_delete" jdbcType="INTEGER"/>
+        <result property="deleteTime" column="delete_time" jdbcType="TIMESTAMP"/>
+        <result property="deleteBy" column="delete_by" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="module" column="module" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="dataHref" column="data_href" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="AttachmentMap">
+        select id,
+               img_name,
+               suffix,
+               size,
+               img_title,
+               img_desc,
+               img_url,
+               absolute_path,
+               is_delete,
+               delete_time,
+               delete_by,
+               create_by,
+               update_by,
+               create_time,
+               module,
+               update_time,
+               data_href
+        from library.attachment
+        where id = #{id}
+    </select>
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from library.attachment
+        where id > -1
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="AttachmentMap">
+        select id,
+               img_name,
+               suffix,
+               size,
+               img_title,
+               img_desc,
+               img_url,
+               absolute_path,
+               is_delete,
+               delete_time,
+               delete_by,
+               create_by,
+               update_by,
+               create_time,
+               module,
+               update_time,
+               data_href
+        from library.attachment
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="AttachmentMap">
+        select
+        id, img_name, suffix, size, img_title, img_desc, img_url, absolute_path, is_delete, delete_time, delete_by,
+        create_by, update_by, create_time, module, update_time, data_href
+        from library.attachment
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="imgName != null and imgName != ''">
+                and img_name = #{imgName}
+            </if>
+            <if test="suffix != null and suffix != ''">
+                and suffix = #{suffix}
+            </if>
+            <if test="size != null and size != ''">
+                and size = #{size}
+            </if>
+            <if test="imgTitle != null and imgTitle != ''">
+                and img_title = #{imgTitle}
+            </if>
+            <if test="imgDesc != null and imgDesc != ''">
+                and img_desc = #{imgDesc}
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                and img_url = #{imgUrl}
+            </if>
+            <if test="absolutePath != null and absolutePath != ''">
+                and absolute_path = #{absolutePath}
+            </if>
+            <if test="isDelete != null">
+                and is_delete = #{isDelete}
+            </if>
+            <if test="deleteTime != null">
+                and delete_time = #{deleteTime}
+            </if>
+            <if test="deleteBy != null">
+                and delete_by = #{deleteBy}
+            </if>
+            <if test="createBy != null">
+                and create_by = #{createBy}
+            </if>
+            <if test="updateBy != null">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="module != null and module != ''">
+                and module = #{module}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="dataHref != null and dataHref != ''">
+                and data_href = #{dataHref}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into library.attachment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="imgName != null and imgName != ''">
+                img_name,
+            </if>
+            <if test="suffix != null and suffix != ''">
+                suffix,
+            </if>
+            <if test="size != null and size != ''">
+                size,
+            </if>
+            <if test="imgTitle != null and imgTitle != ''">
+                img_title,
+            </if>
+            <if test="imgDesc != null and imgDesc != ''">
+                img_desc,
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url,
+            </if>
+            <if test="absolutePath != null and absolutePath != ''">
+                absolute_path,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="deleteTime != null">
+                delete_time,
+            </if>
+            <if test="deleteBy != null">
+                delete_by,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="module != null and module != ''">
+                module,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="dataHref != null and dataHref != ''">
+                data_href,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{id},
+            <if test="imgName != null and imgName != ''">
+                #{imgName},
+            </if>
+            <if test="suffix != null and suffix != ''">
+                #{suffix},
+            </if>
+            <if test="size != null and size != ''">
+                #{size},
+            </if>
+            <if test="imgTitle != null and imgTitle != ''">
+                #{imgTitle},
+            </if>
+            <if test="imgDesc != null and imgDesc != ''">
+                #{imgDesc},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                #{imgUrl},
+            </if>
+            <if test="absolutePath != null and absolutePath != ''">
+                #{absolutePath},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete},
+            </if>
+            <if test="deleteTime != null">
+                #{deleteTime},
+            </if>
+            <if test="deleteBy != null">
+                #{deleteBy},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="module != null and module != ''">
+                #{module},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="dataHref != null and dataHref != ''">
+                #{dataHref},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.attachment(img_name, suffix, size, img_title, img_desc, img_url, absolute_path, is_delete,
+        delete_time, delete_by, create_by, update_by, create_time, module, update_time, data_href)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.imgName}, #{entity.suffix}, #{entity.size}, #{entity.imgTitle}, #{entity.imgDesc},
+            #{entity.imgUrl}, #{entity.absolutePath}, #{entity.isDelete}, #{entity.deleteTime}, #{entity.deleteBy},
+            #{entity.createBy}, #{entity.updateBy}, #{entity.createTime}, #{entity.module}, #{entity.updateTime},
+            #{entity.dataHref})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.attachment(img_name, suffix, size, img_title, img_desc, img_url, absolute_path, is_delete,
+        delete_time, delete_by, create_by, update_by, create_time, module, update_time, data_href)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.imgName}, #{entity.suffix}, #{entity.size}, #{entity.imgTitle}, #{entity.imgDesc},
+            #{entity.imgUrl}, #{entity.absolutePath}, #{entity.isDelete}, #{entity.deleteTime}, #{entity.deleteBy},
+            #{entity.createBy}, #{entity.updateBy}, #{entity.createTime}, #{entity.module}, #{entity.updateTime},
+            #{entity.dataHref})
+        </foreach>
+        on duplicate key update
+        img_name = values(img_name) , suffix = values(suffix) , size = values(size) , img_title = values(img_title) ,
+        img_desc = values(img_desc) , img_url = values(img_url) , absolute_path = values(absolute_path) , is_delete =
+        values(is_delete) , delete_time = values(delete_time) , delete_by = values(delete_by) , create_by =
+        values(create_by) , update_by = values(update_by) , create_time = values(create_time) , module = values(module)
+        , update_time = values(update_time) , data_href = values(data_href)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.attachment
+        <set>
+            <if test="imgName != null and imgName != ''">
+                img_name = #{imgName},
+            </if>
+            <if test="suffix != null and suffix != ''">
+                suffix = #{suffix},
+            </if>
+            <if test="size != null and size != ''">
+                size = #{size},
+            </if>
+            <if test="imgTitle != null and imgTitle != ''">
+                img_title = #{imgTitle},
+            </if>
+            <if test="imgDesc != null and imgDesc != ''">
+                img_desc = #{imgDesc},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url = #{imgUrl},
+            </if>
+            <if test="absolutePath != null and absolutePath != ''">
+                absolute_path = #{absolutePath},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete},
+            </if>
+            <if test="deleteTime != null">
+                delete_time = #{deleteTime},
+            </if>
+            <if test="deleteBy != null">
+                delete_by = #{deleteBy},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="module != null and module != ''">
+                module = #{module},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="dataHref != null and dataHref != ''">
+                data_href = #{dataHref},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.attachment
+        where id = #{id}
+    </delete>
+
+</mapper>
+

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.BorrowingMapper">
+
+    <resultMap type="com.sndshun.library.entity.Borrowing" id="BorrowingMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="bookId" column="book_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BorrowingMap">
+        select id,
+               book_id,
+               user_id,
+               start_time,
+               end_time,
+               update_by,
+               create_by,
+               update_time,
+               create_time
+        from library.borrowing
+        where id = #{id}
+    </select>
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from library.borrowing
+        where id > -1
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BorrowingMap">
+        select id,
+               book_id,
+               user_id,
+               start_time,
+               end_time,
+               update_by,
+               create_by,
+               update_time,
+               create_time
+        from library.borrowing
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BorrowingMap">
+        select
+        id, book_id, user_id, start_time, end_time, update_by, create_by, update_time, create_time
+        from library.borrowing
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="bookId != null">
+                and book_id = #{bookId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+            <if test="updateBy != null">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createBy != null">
+                and create_by = #{createBy}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into library.borrowing
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                book_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">
+                #{bookId},
+            </if>
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="startTime != null">
+                #{startTime},
+            </if>
+            <if test="endTime != null">
+                #{endTime},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.borrowing(book_id, user_id, start_time, end_time, update_by, create_by, update_time,
+        create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.bookId}, #{entity.userId}, #{entity.startTime}, #{entity.endTime}, #{entity.updateBy},
+            #{entity.createBy}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.borrowing(book_id, user_id, start_time, end_time, update_by, create_by, update_time,
+        create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.bookId}, #{entity.userId}, #{entity.startTime}, #{entity.endTime}, #{entity.updateBy},
+            #{entity.createBy}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        book_id = values(book_id) , user_id = values(user_id) , start_time = values(start_time) , end_time =
+        values(end_time) , update_by = values(update_by) , create_by = values(create_by) , update_time =
+        values(update_time) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.borrowing
+        <set>
+            <if test="bookId != null">
+                book_id = #{bookId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.borrowing
+        where id = #{id}
+    </delete>
+
+</mapper>
+

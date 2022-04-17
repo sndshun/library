@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.SysPermissionMapper">
+
+    <resultMap type="com.sndshun.library.entity.SysPermission" id="SysPermissionMap">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="menuCode" column="menu_code" jdbcType="VARCHAR"/>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+        <result property="permissionCode" column="permission_code" jdbcType="VARCHAR"/>
+        <result property="permissionName" column="permission_name" jdbcType="VARCHAR"/>
+        <result property="requiredPermission" column="required_permission" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap type="com.sndshun.library.vo.MenuPerVo" id="MenuPerMap">
+        <id property="menuCode" column="menu_code" jdbcType="VARCHAR"/>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+        <collection property="permissions" ofType="com.sndshun.library.vo.Per">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="permissionCode" column="permission_code" jdbcType="VARCHAR"/>
+            <result property="permissionName" column="permission_name" jdbcType="VARCHAR"/>
+            <result property="requiredPermission" column="required_permission" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+
+
+
+    <select id="getAllMenus" resultType="String">
+        select distinct(menu_code)
+        from library.sys_permission
+    </select>
+    <select id="getAllPermission" resultType="String">
+        select distinct(permission_code)
+        from library.sys_permission
+    </select>
+
+    <!--查询所有-->
+    <select id="getAllIDAndPermission" resultMap="MenuPerMap">
+        select
+               menu_code,
+               menu_name,
+               id,
+               permission_code,
+               permission_name,
+               required_permission
+        from library.sys_permission
+    </select>
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysPermissionMap">
+        select id,
+               menu_code,
+               menu_name,
+               permission_code,
+               permission_name,
+               required_permission,
+               update_time,
+               create_time
+        from library.sys_permission
+        where id = #{id}
+    </select>
+
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from library.sys_permission
+        where id > -1
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysPermissionMap">
+        select id,
+               menu_code,
+               menu_name,
+               permission_code,
+               permission_name,
+               required_permission,
+               update_time,
+               create_time
+        from library.sys_permission
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysPermissionMap">
+        select
+        id, menu_code, menu_name, permission_code, permission_name, required_permission, update_time, create_time
+        from library.sys_permission
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="menuCode != null and menuCode != ''">
+                and menu_code = #{menuCode}
+            </if>
+            <if test="menuName != null and menuName != ''">
+                and menu_name = #{menuName}
+            </if>
+            <if test="permissionCode != null and permissionCode != ''">
+                and permission_code = #{permissionCode}
+            </if>
+            <if test="permissionName != null and permissionName != ''">
+                and permission_name = #{permissionName}
+            </if>
+            <if test="requiredPermission != null">
+                and required_permission = #{requiredPermission}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuCode != null and menuCode != ''">
+                menu_code,
+            </if>
+            <if test="menuName != null and menuName != ''">
+                menu_name,
+            </if>
+            <if test="permissionCode != null and permissionCode != ''">
+                permission_code,
+            </if>
+            <if test="permissionName != null and permissionName != ''">
+                permission_name,
+            </if>
+            <if test="requiredPermission != null">
+                required_permission,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuCode != null and menuCode != ''">
+                #{menuCode},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                #{menuName},
+            </if>
+            <if test="permissionCode != null and permissionCode != ''">
+                #{permissionCode},
+            </if>
+            <if test="permissionName != null and permissionName != ''">
+                #{permissionName},
+            </if>
+            <if test="requiredPermission != null">
+                #{requiredPermission},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_permission(menu_code, menu_name, permission_code, permission_name, required_permission,
+        update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.menuCode}, #{entity.menuName}, #{entity.permissionCode}, #{entity.permissionName},
+            #{entity.requiredPermission}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_permission(menu_code, menu_name, permission_code, permission_name, required_permission,
+        update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.menuCode}, #{entity.menuName}, #{entity.permissionCode}, #{entity.permissionName},
+            #{entity.requiredPermission}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        menu_code = values(menu_code) , menu_name = values(menu_name) , permission_code = values(permission_code) ,
+        permission_name = values(permission_name) , required_permission = values(required_permission) , update_time =
+        values(update_time) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.sys_permission
+        <set>
+            <if test="menuCode != null and menuCode != ''">
+                menu_code = #{menuCode},
+            </if>
+            <if test="menuName != null and menuName != ''">
+                menu_name = #{menuName},
+            </if>
+            <if test="permissionCode != null and permissionCode != ''">
+                permission_code = #{permissionCode},
+            </if>
+            <if test="permissionName != null and permissionName != ''">
+                permission_name = #{permissionName},
+            </if>
+            <if test="requiredPermission != null">
+                required_permission = #{requiredPermission},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.sys_permission
+        where id = #{id}
+    </delete>
+
+</mapper>
+

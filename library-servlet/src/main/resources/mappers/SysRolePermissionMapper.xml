@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.SysRolePermissionMapper">
+
+    <resultMap type="com.sndshun.library.entity.SysRolePermission" id="SysRolePermissionMap">
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <result property="permsId" column="perms_id" jdbcType="INTEGER"/>
+        <result property="updateBy" column="update_by" jdbcType="INTEGER"/>
+        <result property="createBy" column="create_by" jdbcType="INTEGER"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <resultMap id="RoleIsMenuPerMap" type="com.sndshun.library.vo.RoleMenuPerVo">
+        <id property="rid" column="rid" jdbcType="INTEGER"/>
+        <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <collection property="menus" ofType="com.sndshun.library.vo.MenuPer">
+            <id property="menuCode" column="menu_code" jdbcType="VARCHAR"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <collection property="permissions" ofType="com.sndshun.library.vo.Permission">
+                <id property="pid" column="pid" jdbcType="INTEGER"/>
+                <result property="permissionName" column="permission_name" jdbcType="VARCHAR"/>
+                <result property="requiredPermission" column="required_permission" jdbcType="INTEGER"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+
+    <!--查询角色及角色下权限-->
+    <select id="queryRoleIsMenuPer" resultMap="RoleIsMenuPerMap">
+        select r.id rid,
+               r.role_name,
+               r.description,
+               p.menu_code,
+               p.menu_name,
+               p.id pid,
+               p.permission_name,
+               p.required_permission
+        from library.sys_role r
+                 left join library.sys_role_permission rp
+                           on r.id = rp.role_id
+                 left join library.sys_permission p
+                           on rp.perms_id = p.id
+    </select>
+
+    <!--修改权限-->
+    <insert id="updRolePer" useGeneratedKeys="true">
+        insert into library.sys_role_permission(role_id,perms_id,update_by, create_by)
+        values
+        <foreach collection="permissions" item="item" separator=",">
+            (#{rid}, #{item}, #{uid}, #{uid})
+        </foreach>
+    </insert>
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysRolePermissionMap">
+        select role_id,
+               perms_id,
+               update_by,
+               create_by,
+               update_time,
+               create_time
+        from library.sys_role_permission
+        where role_id = #{roleId}
+    </select>
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from library.sys_role_permission
+        where role_id > -1
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysRolePermissionMap">
+        select role_id,
+               perms_id,
+               update_by,
+               create_by,
+               update_time,
+               create_time
+        from library.sys_role_permission
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysRolePermissionMap">
+        select
+        role_id, perms_id, update_by, create_by, update_time, create_time
+        from library.sys_role_permission
+        <where>
+            <if test="roleId != null">
+                and role_id = #{roleId}
+            </if>
+            <if test="permsId != null">
+                and perms_id = #{permsId}
+            </if>
+            <if test="updateBy != null">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createBy != null">
+                and create_by = #{createBy}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="roleId" useGeneratedKeys="true">
+        insert into library.sys_role_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="updateBy != null">
+                #{updateBy},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="roleId" useGeneratedKeys="true">
+        insert into library.sys_role_permission(update_by, create_by, update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.updateBy}, #{entity.createBy}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="roleId" useGeneratedKeys="true">
+        insert into library.sys_role_permission(update_by, create_by, update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.updateBy}, #{entity.createBy}, #{entity.updateTime}, #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        update_by = values(update_by) , create_by = values(create_by) , update_time = values(update_time) , create_time
+        = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.sys_role_permission
+        <set>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where role_id = #{roleId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.sys_role_permission
+        where role_id = #{roleId}
+    </delete>
+
+</mapper>
+

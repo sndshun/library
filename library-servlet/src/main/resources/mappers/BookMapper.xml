@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.BookMapper">
+
+    <resultMap type="com.sndshun.library.entity.Book" id="BookMap">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="subTitle" column="sub_title" jdbcType="VARCHAR"/>
+        <result property="originTitle" column="origin_title" jdbcType="VARCHAR"/>
+        <result property="author" column="author" jdbcType="VARCHAR"/>
+        <result property="bookType" column="book_type" jdbcType="INTEGER"/>
+        <result property="bindng" column="bindng" jdbcType="VARCHAR"/>
+        <result property="pages" column="pages" jdbcType="INTEGER"/>
+        <result property="attachmentId" column="attachment_id" jdbcType="VARCHAR"/>
+        <result property="brand" column="brand" jdbcType="VARCHAR"/>
+        <result property="isbn10" column="isbn10" jdbcType="VARCHAR"/>
+        <result property="isbn13" column="isbn13" jdbcType="VARCHAR"/>
+        <result property="summary" column="summary" jdbcType="VARCHAR"/>
+        <result property="originalTexts" column="original_texts" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="NUMERIC"/>
+        <result property="total" column="total" jdbcType="INTEGER"/>
+        <result property="currentNumber" column="current_number" jdbcType="INTEGER"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="publisher" column="publisher" jdbcType="VARCHAR"/>
+        <result property="pubdate" column="pubdate" jdbcType="TIMESTAMP"/>
+        <result property="likes" column="likes" jdbcType="INTEGER"/>
+        <result property="borrows" column="borrows" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="BookVoMap" type="com.sndshun.library.vo.BookVo" extends="BookMap">
+        <result property="createName" column="createName" jdbcType="VARCHAR"/>
+        <result property="updateName" column="updateName" jdbcType="VARCHAR"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="imgDesc" column="img_desc" jdbcType="VARCHAR"/>
+        <collection property="tags" ofType="com.sndshun.library.entity.BookTag">
+            <id property="id" column="tagId" jdbcType="INTEGER"/>
+            <result property="bookTagsId" column="btId" jdbcType="INTEGER"/>
+            <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
+            <result property="tagLikes" column="tagLikes" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="BookVoListMap" type="com.sndshun.library.vo.BookVo" extends="BookMap">
+        <result property="createName" column="createName" jdbcType="VARCHAR"/>
+        <result property="updateName" column="updateName" jdbcType="VARCHAR"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="BookVoListToHome" type="com.sndshun.library.vo.BookVo" extends="BookMap">
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+        <result property="imgDesc" column="img_desc" jdbcType="VARCHAR"/>
+        <result property="dataHref" column="data_href" jdbcType="VARCHAR"/>
+        <result property="typeName" column="type_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BookVoMap">
+        SELECT b.id,
+               b.title,
+               b.sub_title,
+               b.origin_title,
+               b.author,
+               b.book_type,
+               t.type_name,
+               b.bindng,
+               b.pages,
+               b.attachment_id,
+               a.img_url,
+               a.img_desc,
+               b.brand,
+               b.isbn10,
+               b.isbn13,
+               b.summary,
+               b.original_texts,
+               b.price,
+               b.total,
+               b.current_number,
+               b.update_time,
+               b.create_time,
+               b.publisher,
+               b.pubdate,
+               b.likes,
+               b.borrows,
+               s.likes   tagLikes,
+               g.id      tagId,
+               g.tag_name,
+               u.`name`  createName,
+               u2.`name` updateName
+        FROM library.book b
+                 LEFT JOIN library.book_type t ON t.id = b.book_type
+                 LEFT JOIN library.attachment a on a.id = b.attachment_id
+                 LEFT JOIN library.book_tags s ON s.book_id = b.id
+                 LEFT JOIN library.book_tag g ON g.id = s.tag_id
+                 LEFT JOIN library.sys_user u ON u.id = b.create_by
+                 LEFT JOIN library.sys_user u2 ON u2.id = b.update_by
+        WHERE b.id = #{id}
+    </select>
+    <!--查询图书标签-->
+    <select id="queryBookTags" resultMap="BookVoMap">
+        SELECT b.id,
+               b.title,
+               s.id    btId,
+               g.id    tagId,
+               s.likes tagLikes,
+               g.tag_name
+        FROM library.book b
+                 LEFT JOIN library.book_tags s ON s.book_id = b.id
+                 LEFT JOIN library.book_tag g ON g.id = s.tag_id
+        WHERE b.id = #{id}
+    </select>
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        SELECT COUNT(*)
+        from
+        (select b.id
+        from
+        library.book b
+        LEFT JOIN library.book_type t ON t.id=b.book_type
+        LEFT JOIN library.book_tags s ON s.book_id=b.id
+        LEFT JOIN library.book_tag g ON g.id=s.tag_id
+        LEFT JOIN library.sys_user u ON u.id=b.create_by
+        LEFT JOIN library.sys_user u2 ON u2.id=b.update_by
+        <where>
+            b.id > -1
+            <if test="vo.title!=null and vo.title!=''">
+                and b.title like concat('%',#{vo.title},'%')
+            </if>
+            <if test="vo.author!=null and vo.author!=''">
+                and b.author like concat('%',#{vo.author},'%')
+            </if>
+            <if test="vo.brand!=null and vo.brand!=''">
+                and b.brand like concat('%',#{vo.brand},'%')
+            </if>
+            <if test="vo.isbn10!=null and vo.isbn10!=''">
+                and b.isbn10 =#{vo.isbn10}
+            </if>
+            <if test="vo.isbn13!=null and vo.isbn13!=''">
+                and b.isbn13 =#{vo.isbn13}
+            </if>
+            <if test="vo.bookType!=null">
+                and b.book_type = #{vo.bookType}
+            </if>
+            <if test="vo.createName!=null and vo.createName!=''">
+                and u.name like concat('%',#{vo.createName},'%')
+            </if>
+            <if test="vo.tagId != null">
+                and s.tag_id in
+                <foreach collection="vo.tagId" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by b.id
+        <if test="vo.tagId != null">
+            having count(b.id) = ${vo.tagId.size()}
+        </if>
+        ) as bookCount
+    </select>
+    <!--查询指定行数据 后台使用-->
+    <select id="queryAllByLimit" resultMap="BookVoListMap">
+        SELECT
+        b.id,
+        b.title,
+        b.sub_title,
+        b.origin_title,
+        b.author,
+        t.type_name,
+        b.price,
+        b.total,
+        b.current_number,
+        b.likes,
+        b.borrows,
+        u.`name` createName,
+        u2.`name` updateName
+        FROM
+        library.book b
+        LEFT JOIN library.book_type t ON t.id=b.book_type
+        LEFT JOIN library.attachment a on a.id = b.attachment_id
+        LEFT JOIN library.book_tags s ON s.book_id=b.id
+        LEFT JOIN library.book_tag g ON g.id=s.tag_id
+        LEFT JOIN library.sys_user u ON u.id=b.create_by
+        LEFT JOIN library.sys_user u2 ON u2.id=b.update_by
+        <where>
+            <if test="vo.title!=null and vo.title!=''">
+                and b.title like concat('%',#{vo.title},'%')
+            </if>
+            <if test="vo.author!=null and vo.author!=''">
+                and b.author like concat('%',#{vo.author},'%')
+            </if>
+            <if test="vo.brand!=null and vo.brand!=''">
+                and b.brand like concat('%',#{vo.brand},'%')
+            </if>
+            <if test="vo.isbn10!=null and vo.isbn10!=''">
+                and b.isbn10 =#{vo.isbn10}
+            </if>
+            <if test="vo.isbn13!=null and vo.isbn13!=''">
+                and b.isbn13 =#{vo.isbn13}
+            </if>
+            <if test="vo.bookType!=null">
+                and b.book_type = #{vo.bookType}
+            </if>
+            <if test="vo.createName!=null and vo.createName!=''">
+                and u.name like concat('%',#{vo.createName},'%')
+            </if>
+            <if test="vo.tagId != null">
+                and s.tag_id in
+                <foreach collection="vo.tagId" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by b.id
+        <if test="vo.tagId != null">
+            having count(b.id) = ${vo.tagId.size()}
+        </if>
+        order by b.id desc
+        limit #{ew.start}, #{ew.size}
+    </select>
+    <!--查询指定行数据 前台使用-->
+    <select id="queryBookList" resultMap="BookVoListToHome">
+        SELECT
+        b.id,
+        b.title,
+        b.sub_title,
+        b.origin_title,
+        b.author,
+        b.publisher,
+        b.pubdate,
+        t.type_name,
+        a.img_url,
+        a.img_desc,
+        a.data_href,
+        b.price,
+        b.total,
+        b.current_number,
+        b.likes,
+        b.borrows
+        FROM
+        library.book b
+        LEFT JOIN library.book_type t ON t.id=b.book_type
+        LEFT JOIN library.attachment a on a.id = b.attachment_id
+        LEFT JOIN library.book_tags s ON s.book_id=b.id
+        LEFT JOIN library.book_tag g ON g.id=s.tag_id
+        LEFT JOIN library.sys_user u ON u.id=b.create_by
+        LEFT JOIN library.sys_user u2 ON u2.id=b.update_by
+        <where>
+            <if test="vo.title!=null and vo.title!=''">
+                and b.title like concat('%',#{vo.title},'%')
+            </if>
+            <if test="vo.author!=null and vo.author!=''">
+                and b.author like concat('%',#{vo.author},'%')
+            </if>
+            <if test="vo.brand!=null and vo.brand!=''">
+                and b.brand like concat('%',#{vo.brand},'%')
+            </if>
+            <if test="vo.isbn10!=null and vo.isbn10!=''">
+                and b.isbn10 =#{vo.isbn10}
+            </if>
+            <if test="vo.isbn13!=null and vo.isbn13!=''">
+                and b.isbn13 =#{vo.isbn13}
+            </if>
+            <if test="vo.bookType!=null">
+                and b.book_type = #{vo.bookType}
+            </if>
+            <if test="vo.createName!=null and vo.createName!=''">
+                and u.name like concat('%',#{vo.createName},'%')
+            </if>
+            <if test="vo.tagId != null">
+                and s.tag_id in
+                <foreach collection="vo.tagId" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        group by b.id
+        <if test="vo.tagId != null">
+            having count(b.id) = ${vo.tagId.size()}
+        </if>
+        order by b.id desc
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BookMap">
+        select
+        id, title, sub_title, origin_title, author, book_type, bindng, pages, attachment_id, isbn10, isbn13, summary,
+        original_texts, price, total, current_number, update_by, create_by, update_time, create_time, publisher,
+        pubdate, likes
+        from library.book
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="subTitle != null and subTitle != ''">
+                and sub_title = #{subTitle}
+            </if>
+            <if test="originTitle != null and originTitle != ''">
+                and origin_title = #{originTitle}
+            </if>
+            <if test="author != null and author != ''">
+                and author = #{author}
+            </if>
+            <if test="bookType != null">
+                and book_type = #{bookType}
+            </if>
+            <if test="bindng != null and bindng != ''">
+                and bindng = #{bindng}
+            </if>
+            <if test="pages != null">
+                and pages = #{pages}
+            </if>
+            <if test="attachmentId != null and attachmentId != ''">
+                and attachment_id = #{attachmentId}
+            </if>
+            <if test="isbn10 != null and isbn10 != ''">
+                and isbn10 = #{isbn10}
+            </if>
+            <if test="isbn13 != null and isbn13 != ''">
+                and isbn13 = #{isbn13}
+            </if>
+            <if test="summary != null and summary != ''">
+                and summary = #{summary}
+            </if>
+            <if test="originalTexts != null and originalTexts != ''">
+                and original_texts = #{originalTexts}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="total != null">
+                and total = #{total}
+            </if>
+            <if test="currentNumber != null">
+                and current_number = #{currentNumber}
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                and update_by = #{updateBy}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+            <if test="publisher != null and publisher != ''">
+                and publisher = #{publisher}
+            </if>
+            <if test="pubdate != null">
+                and pubdate = #{pubdate}
+            </if>
+            <if test="likes != null">
+                and likes = #{likes}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into library.book
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="subTitle != null and subTitle != ''">
+                sub_title,
+            </if>
+            <if test="originTitle != null and originTitle != ''">
+                origin_title,
+            </if>
+            <if test="author != null and author != ''">
+                author,
+            </if>
+            <if test="bookType != null">
+                book_type,
+            </if>
+            <if test="bindng != null and bindng != ''">
+                bindng,
+            </if>
+            <if test="pages != null">
+                pages,
+            </if>
+            <if test="attachmentId != null and attachmentId != ''">
+                attachment_id,
+            </if>
+            <if test="brand != null and brand != ''">
+                brand,
+            </if>
+            <if test="isbn10 != null and isbn10 != ''">
+                isbn10,
+            </if>
+            <if test="isbn13 != null and isbn13 != ''">
+                isbn13,
+            </if>
+            <if test="summary != null and summary != ''">
+                summary,
+            </if>
+            <if test="originalTexts != null and originalTexts != ''">
+                original_texts,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="total != null">
+                total,
+            </if>
+            <if test="currentNumber != null">
+                current_number,
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by,
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="publisher != null and publisher != ''">
+                publisher,
+            </if>
+            <if test="pubdate != null">
+                pubdate,
+            </if>
+            <if test="likes != null">
+                likes,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">
+                #{title},
+            </if>
+            <if test="subTitle != null and subTitle != ''">
+                #{subTitle},
+            </if>
+            <if test="originTitle != null and originTitle != ''">
+                #{originTitle},
+            </if>
+            <if test="author != null and author != ''">
+                #{author},
+            </if>
+            <if test="bookType != null">
+                #{bookType},
+            </if>
+            <if test="bindng != null and bindng != ''">
+                #{bindng},
+            </if>
+            <if test="pages != null">
+                #{pages},
+            </if>
+            <if test="attachmentId != null and attachmentId != ''">
+                #{attachmentId},
+            </if>
+            <if test="brand != null and brand != ''">
+                #{brand},
+            </if>
+            <if test="isbn10 != null and isbn10 != ''">
+                #{isbn10},
+            </if>
+            <if test="isbn13 != null and isbn13 != ''">
+                #{isbn13},
+            </if>
+            <if test="summary != null and summary != ''">
+                #{summary},
+            </if>
+            <if test="originalTexts != null and originalTexts != ''">
+                #{originalTexts},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="total != null">
+                #{total},
+            </if>
+            <if test="currentNumber != null">
+                #{currentNumber},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                #{updateBy},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                #{createBy},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="publisher != null and publisher != ''">
+                #{publisher},
+            </if>
+            <if test="pubdate != null">
+                #{pubdate},
+            </if>
+            <if test="likes != null">
+                #{likes},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.book(title, sub_title, origin_title, author, book_type, bindng, pages, attachment_id,
+        isbn10, isbn13, summary, original_texts, price, total, current_number, update_by, create_by, update_time,
+        create_time, publisher, pubdate, likes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}, #{entity.subTitle}, #{entity.originTitle}, #{entity.author}, #{entity.bookType},
+            #{entity.bindng}, #{entity.pages}, #{entity.attachmentId}, #{entity.isbn10}, #{entity.isbn13},
+            #{entity.summary}, #{entity.originalTexts}, #{entity.price}, #{entity.total}, #{entity.currentNumber},
+            #{entity.updateBy}, #{entity.createBy}, #{entity.updateTime}, #{entity.createTime}, #{entity.publisher},
+            #{entity.pubdate}, #{entity.likes})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.book(title, sub_title, origin_title, author, book_type, bindng, pages, attachment_id,
+        isbn10, isbn13, summary, original_texts, price, total, current_number, update_by, create_by, update_time,
+        create_time, publisher, pubdate, likes)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.title}, #{entity.subTitle}, #{entity.originTitle}, #{entity.author}, #{entity.bookType},
+            #{entity.bindng}, #{entity.pages}, #{entity.attachmentId}, #{entity.isbn10}, #{entity.isbn13},
+            #{entity.summary}, #{entity.originalTexts}, #{entity.price}, #{entity.total}, #{entity.currentNumber},
+            #{entity.updateBy}, #{entity.createBy}, #{entity.updateTime}, #{entity.createTime}, #{entity.publisher},
+            #{entity.pubdate}, #{entity.likes})
+        </foreach>
+        on duplicate key update
+        title = values(title) , sub_title = values(sub_title) , origin_title = values(origin_title) , author =
+        values(author) , book_type = values(book_type) , bindng = values(bindng) ,
+        pages = values(pages) , attachment_id = values(attachment_id) , isbn10 = values(isbn10) , isbn13 =
+        values(isbn13) , summary =
+        values(summary) , original_texts = values(original_texts) , price = values(price) , total = values(total) ,
+        current_number = values(current_number) , update_by = values(update_by) , create_by = values(create_by) ,
+        update_time = values(update_time) , create_time = values(create_time) , publisher = values(publisher) , pubdate
+        = values(pubdate) , likes = values(likes)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.book
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="subTitle != null and subTitle != ''">
+                sub_title = #{subTitle},
+            </if>
+            <if test="originTitle != null and originTitle != ''">
+                origin_title = #{originTitle},
+            </if>
+            <if test="author != null and author != ''">
+                author = #{author},
+            </if>
+            <if test="bookType != null">
+                book_type = #{bookType},
+            </if>
+            <if test="bindng != null and bindng != ''">
+                bindng = #{bindng},
+            </if>
+            <if test="pages != null">
+                pages = #{pages},
+            </if>
+            <if test="attachmentId != null and attachmentId != ''">
+                attachment_id = #{attachmentId},
+            </if>
+            <if test="brand != null and brand != ''">
+                brand = #{brand},
+            </if>
+            <if test="isbn10 != null and isbn10 != ''">
+                isbn10 = #{isbn10},
+            </if>
+            <if test="isbn13 != null and isbn13 != ''">
+                isbn13 = #{isbn13},
+            </if>
+            <if test="summary != null and summary != ''">
+                summary = #{summary},
+            </if>
+            <if test="originalTexts != null and originalTexts != ''">
+                original_texts = #{originalTexts},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="total != null">
+                total = #{total},
+            </if>
+            <if test="currentNumber != null">
+                current_number = #{currentNumber},
+            </if>
+            <if test="updateBy != null and updateBy != ''">
+                update_by = #{updateBy},
+            </if>
+            <if test="createBy != null and createBy != ''">
+                create_by = #{createBy},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="publisher != null and publisher != ''">
+                publisher = #{publisher},
+            </if>
+            <if test="pubdate != null">
+                pubdate = #{pubdate},
+            </if>
+            <if test="likes != null">
+                likes = #{likes},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.book
+        where id = #{id}
+    </delete>
+    <!--通过主键批量删除-->
+    <delete id="deleteBatch">
+        delete
+        from library.book
+        where id in
+        <foreach collection="entities" item="entity" separator="," open="(" close=")">
+            #{entity}
+        </foreach>
+    </delete>
+
+</mapper>
+

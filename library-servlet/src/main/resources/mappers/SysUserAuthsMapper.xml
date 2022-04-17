@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sndshun.library.mapper.SysUserAuthsMapper">
+
+    <resultMap type="com.sndshun.library.entity.SysUserAuths" id="SysUserAuthsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="identityType" column="identity_type" jdbcType="VARCHAR"/>
+        <result property="identifier" column="identifier" jdbcType="VARCHAR"/>
+        <result property="credential" column="credential" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysUserAuthsMap">
+        select id,
+               user_id,
+               identity_type,
+               identifier,
+               credential,
+               update_time,
+               create_time
+        from library.sys_user_auths
+        where id = #{id}
+    </select>
+
+    <!--查询总量-->
+    <select id="queryCount" resultType="int">
+        select count(*)
+        from library.sys_user_auths
+        where id > -1
+    </select>
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysUserAuthsMap">
+        select id,
+               user_id,
+               identity_type,
+               identifier,
+               credential,
+               update_time,
+               create_time
+        from library.sys_user_auths
+        limit #{ew.start}, #{ew.size}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="SysUserAuthsMap">
+        select
+        id, user_id, identity_type, identifier, credential, update_time, create_time
+        from library.sys_user_auths
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+            <if test="identityType != null and identityType != ''">
+                and identity_type = #{identityType}
+            </if>
+            <if test="identifier != null and identifier != ''">
+                and identifier = #{identifier}
+            </if>
+            <if test="credential != null and credential != ''">
+                and credential = #{credential}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="createTime != null">
+                and create_time = #{createTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_user_auths
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="identityType != null and identityType != ''">
+                identity_type,
+            </if>
+            <if test="identifier != null and identifier != ''">
+                identifier,
+            </if>
+            <if test="credential != null and credential != ''">
+                credential,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId},
+            </if>
+            <if test="identityType != null and identityType != ''">
+                #{identityType},
+            </if>
+            <if test="identifier != null and identifier != ''">
+                #{identifier},
+            </if>
+            <if test="credential != null and credential != ''">
+                #{credential},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_user_auths(user_id, identity_type, identifier, credential, update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.identityType}, #{entity.identifier}, #{entity.credential}, #{entity.updateTime},
+            #{entity.createTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into library.sys_user_auths(user_id, identity_type, identifier, credential, update_time, create_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.userId}, #{entity.identityType}, #{entity.identifier}, #{entity.credential}, #{entity.updateTime},
+            #{entity.createTime})
+        </foreach>
+        on duplicate key update
+        user_id = values(user_id) , identity_type = values(identity_type) , identifier = values(identifier) , credential
+        = values(credential) , update_time = values(update_time) , create_time = values(create_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update library.sys_user_auths
+        <set>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="identityType != null and identityType != ''">
+                identity_type = #{identityType},
+            </if>
+            <if test="identifier != null and identifier != ''">
+                identifier = #{identifier},
+            </if>
+            <if test="credential != null and credential != ''">
+                credential = #{credential},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from library.sys_user_auths
+        where id = #{id}
+    </delete>
+
+</mapper>
+

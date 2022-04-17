@@ -1,0 +1,104 @@
+/*-------------------------------------------------------------common*/
+.el-scrollbar {
+  --el-scrollbar-opacity: .8;
+  --el-scrollbar-bg-color: #909399;
+  --el-scrollbar-hover-opacity: 1;
+  --el-scrollbar-hover-bg-color: var(--el-text-color-secondary);
+}
+/*---------------------------------------文件上传样式*/
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
+}
+
+/*-------------------------------------------------------------layout*/
+html, body, #app {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
+#layout {
+  height: 100%;
+  width: 100%;
+}
+.el-header {
+  --el-header-height: 90px;
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  height: var(--el-header-height);
+  z-index: 99;
+}
+
+.el-aside {
+  --el-aside-width: 200px;
+  height: 100vh;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  width: var(--el-aside-width);
+  --el-menu-bg-color: rgb(48 51 60);
+  background-color: var(--el-menu-bg-color);
+}
+.el-sub-menu .el-menu{
+  background-color: #1f2126;
+}
+
+.el-main {
+  height: calc(100vh - 90px);
+  overflow: hidden;
+  --el-main-padding: 10px;
+  display: block;
+  flex: 1;
+  flex-basis: auto;
+  overflow: auto;
+  box-sizing: border-box;
+  padding: var(--el-main-padding);
+}
+
+/*-------------------------------------------------------------page*/
+.el-menu {
+  --el-menu-active-color: var(--el-color-primary);
+  --el-menu-text-color: #ffffff;
+  --el-menu-hover-text-color: var(--el-text-color-primary);
+  --el-menu-bg-color: rgb(48 51 60);
+  --el-menu-hover-bg-color: #272a32;
+  --el-menu-item-height: 56px;
+  --el-menu-item-font-size: var(--el-font-size-base);
+  --el-menu-item-hover-fill: var(--el-color-primary-light-9);
+  --el-menu-border-color: var(--el-border-color);
+  //border-right: solid 1px var(--el-menu-border-color);
+  border: none;
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding-left: 0;
+  background-color: var(--el-menu-bg-color);
+  box-sizing: border-box;
+}
