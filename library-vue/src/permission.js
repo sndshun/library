@@ -1,6 +1,6 @@
-import router, {baseRouters, routerList} from "./router";
+import router, {baseRouters} from "./router";
 import {sysStore, userStore} from "./store";
-import {getLibrary, getRememberMeLibrary, setRememberMeLibrary} from "./utils/auth";
+import {getLibrary, getRememberMeLibrary} from "./utils/auth";
 
 const whiteRouter = baseRouters.map(item => {
     return item.path
@@ -24,7 +24,7 @@ router.beforeEach(async (to, from, next) => {
         if (library && (!userInfo)) {
             await getInfo()
         }
-        next();
+        next()
     } else if (library) {
         if (userInfo) {
             next()

@@ -3,8 +3,9 @@ import request from "../utils/request";
 import ajaxRequest from "../utils/ajaxRequest";
 import http from "../utils/http";
 
-const key='12360.cb285f5d3a226ccf0cba2d38c76e2e72.7bb24a8075895d02fe65bab18b2fe88b'
-//------------------------------------------------------ 书籍前台接口
+const key = '12360.cb285f5d3a226ccf0cba2d38c76e2e72.7bb24a8075895d02fe65bab18b2fe88b'
+
+//------------------------------------------------------------------------------- 书籍前台接口
 export function getBooks(params) {
     return request({
         url: "/book/list",
@@ -16,7 +17,24 @@ export function getBooks(params) {
     });
 }
 
-//------------------------------------------------------ 书籍后台接口
+//-------------------------------------- 标签
+export function hotTags(count) {
+    return request({
+        url: "/bookTags/hotTags",
+        method: "get",
+        params: {
+            count
+        }
+    })
+}
+export function getAllTags() {
+    return request({
+        url: "/bookTag/list",
+        method: "get",
+    })
+}
+
+//------------------------------------------------------------------------------- 书籍后台接口
 
 export function getTestBook(params) {
     return http({
@@ -43,6 +61,7 @@ export function getBookDetail(id) {
         method: "get",
     });
 }
+
 export function getBookTags(id) {
     return request({
         url: `/book/getTags/${id}`,
@@ -57,6 +76,7 @@ export function addBook(data) {
         , data: data
     })
 }
+
 export function updBook(data) {
     return request({
         url: '/book'
@@ -173,6 +193,7 @@ export function batchDelBookTag(ids) {
         , data: ids
     })
 }
+
 //------------------------------------------------------ 标签关联
 export function addBookTags(data) {
     return request({
@@ -181,6 +202,7 @@ export function addBookTags(data) {
         , data: data
     })
 }
+
 export function delBookTags(data) {
     return request({
         url: '/bookTags'

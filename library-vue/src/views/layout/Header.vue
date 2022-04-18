@@ -28,8 +28,8 @@
               :key="index"
               :closable="!item.open"
               @close="delTag(index)"
-              @click="router.push(item.path)"
               :effect="route.path === item.path ? 'dark' : 'plain'"
+              @click="router.push(item.path)"
           >
             {{ item.name }}
           </el-tag>

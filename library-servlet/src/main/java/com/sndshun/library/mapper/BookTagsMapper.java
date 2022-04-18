@@ -18,6 +18,13 @@ import java.util.List;
 public interface BookTagsMapper {
 
     /**
+     * 热门标签
+     * @param count 数量
+     * @return 标签列表
+     */
+    List<BookTags> hotTags(Integer count);
+
+    /**
      * 通过ID查询单条数据
      *
      * @param id 主键

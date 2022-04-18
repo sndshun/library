@@ -10,6 +10,7 @@ import com.sndshun.library.utils.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,11 @@ public class BookTagsController {
      */
     @Resource
     private BookTagsService bookTagsService;
+
+    @GetMapping("hotTags")
+    public Result<List<BookTags>> hotTags(Integer count) {
+        return Result.success(this.bookTagsService.hotTags(count));
+    }
 
     @GetMapping("page")
     public Result<PageUtil<BookTags>> page(PageUtil<BookTags> pageUtil){

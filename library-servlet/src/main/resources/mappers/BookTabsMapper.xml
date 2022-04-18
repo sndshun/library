@@ -11,27 +11,51 @@
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createBy" column="create_by" jdbcType="INTEGER"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+
+        <result property="tagName" column="tag_name" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <!--查询热门标签-->
+    <select id="hotTags" resultMap="BookTagsMap">
+        SELECT tag_id, sum(likes) likes, t.tag_name
+        FROM library.book_tags s
+                 LEFT JOIN library.book_tag t on t.id = s.tag_id
+        GROUP BY tag_id
+        ORDER BY sum(likes) DESC
+        LIMIT #{count}
+    </select>
+
 
     <!--查询单个-->
     <select id="queryById" resultMap="BookTagsMap">
-        select
-          id, book_id, tag_id, likes, update_by, update_time, create_by, create_time
+        select id,
+               book_id,
+               tag_id,
+               likes,
+               update_by,
+               update_time,
+               create_by,
+               create_time
         from library.book_tags
         where id = #{id}
     </select>
 
     <!--查询总量-->
     <select id="queryCount" resultType="int">
-        select
-          count(*)
+        select count(*)
         from library.book_tags
         where id > -1
     </select>
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="BookTagsMap">
-        select
-          id, book_id, tag_id, likes, update_by, update_time, create_by, create_time
+        select id,
+               book_id,
+               tag_id,
+               likes,
+               update_by,
+               update_time,
+               create_by,
+               create_time
         from library.book_tags
         limit #{ew.start}, #{ew.size}
     </select>
@@ -39,7 +63,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="BookTagsMap">
         select
-          id, book_id, tag_id, likes, update_by, update_time, create_by, create_time
+        id, book_id, tag_id, likes, update_by, update_time, create_by, create_time
         from library.book_tags
         <where>
             <if test="id != null">
@@ -73,59 +97,60 @@
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into library.book_tags
         <trim prefix="(" suffix=")" suffixOverrides=",">
-                   <if test="bookId != null">
+            <if test="bookId != null">
                 book_id,
             </if>
-                    <if test="tagId != null">
+            <if test="tagId != null">
                 tag_id,
             </if>
-                    <if test="likes != null">
+            <if test="likes != null">
                 likes,
             </if>
-                    <if test="updateBy != null">
+            <if test="updateBy != null">
                 update_by,
             </if>
-                    <if test="updateTime != null">
+            <if test="updateTime != null">
                 update_time,
             </if>
-                    <if test="createBy != null">
+            <if test="createBy != null">
                 create_by,
             </if>
-                    <if test="createTime != null">
+            <if test="createTime != null">
                 create_time,
             </if>
-               </trim>
+        </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides=",">
-                   <if test="bookId != null">
+            <if test="bookId != null">
                 #{bookId},
             </if>
-                    <if test="tagId != null">
+            <if test="tagId != null">
                 #{tagId},
             </if>
-                    <if test="likes != null">
+            <if test="likes != null">
                 #{likes},
             </if>
-                    <if test="updateBy != null">
+            <if test="updateBy != null">
                 #{updateBy},
             </if>
-                    <if test="updateTime != null">
+            <if test="updateTime != null">
                 #{updateTime},
             </if>
-                    <if test="createBy != null">
+            <if test="createBy != null">
                 #{createBy},
             </if>
-                    <if test="createTime != null">
+            <if test="createTime != null">
                 #{createTime},
             </if>
-               </trim>
+        </trim>
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into library.book_tags(book_id, tag_id, likes, update_by, update_time, create_by, create_time)
         values
         <foreach collection="entities" item="entity" separator=",">
-        (#{entity.bookId}, #{entity.tagId}, #{entity.likes}, #{entity.updateBy}, #{entity.updateTime}, #{entity.createBy}, #{entity.createTime})
+            (#{entity.bookId}, #{entity.tagId}, #{entity.likes}, #{entity.updateBy}, #{entity.updateTime},
+            #{entity.createBy}, #{entity.createTime})
         </foreach>
     </insert>
 
@@ -133,10 +158,13 @@
         insert into library.book_tags(book_id, tag_id, likes, update_by, update_time, create_by, create_time)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.bookId}, #{entity.tagId}, #{entity.likes}, #{entity.updateBy}, #{entity.updateTime}, #{entity.createBy}, #{entity.createTime})
+            (#{entity.bookId}, #{entity.tagId}, #{entity.likes}, #{entity.updateBy}, #{entity.updateTime},
+            #{entity.createBy}, #{entity.createTime})
         </foreach>
         on duplicate key update
-         book_id = values(book_id) , tag_id = values(tag_id) , likes = values(likes) , update_by = values(update_by) , update_time = values(update_time) , create_by = values(create_by) , create_time = values(create_time)     </insert>
+        book_id = values(book_id) , tag_id = values(tag_id) , likes = values(likes) , update_by = values(update_by) ,
+        update_time = values(update_time) , create_by = values(create_by) , create_time = values(create_time)
+    </insert>
 
     <!--通过主键修改数据-->
     <update id="update">
@@ -169,12 +197,16 @@
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from library.book_tags where id = #{id}
+        delete
+        from library.book_tags
+        where id = #{id}
     </delete>
 
     <!--通过图书主键删除-->
     <delete id="deleteByBookId">
-        delete from library.book_tags where book_id = #{id}
+        delete
+        from library.book_tags
+        where book_id = #{id}
     </delete>
 
     <!--批量删除图书时批量删除对应标签-->
@@ -186,7 +218,6 @@
             #{entity}
         </foreach>
     </delete>
-
 
 
 </mapper>

@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import Router from "../router";
-
+import {baseRouters} from "../router";
 
 export const sysStore = defineStore('sys', {
     state: () => {
@@ -33,7 +33,13 @@ export const sysStore = defineStore('sys', {
                 } else {
                     this.mainAni = 'left'
                 }
-                if (index === -1) {
+                //禁止添加白名单路由
+                const flag= baseRouters.some(item => {
+                    if (item.path === breadcrumb.path) {
+                        return true
+                    }
+                })
+                if (index === -1&&!flag) {
                     this.breadcrumb.push(breadcrumb)
                 } else {
                     this.mainIndex = index

@@ -78,7 +78,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="BookTagMap">
         select
-        id, tag_name, update_by, create_by, update_time, create_time, tag_state
+        id, tag_name
         from library.book_tag
         <where>
             <if test="id != null">

@@ -60,4 +60,9 @@ public class BookTags implements Serializable {
 
     private Date createTime;
 
+    /**
+     * 附件字段，标签名
+     */
+    private String tagName;
+
 }

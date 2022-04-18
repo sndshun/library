@@ -1,7 +1,9 @@
 <template>
+  <home-menu/>
   <div class="container">
     <el-row :gutter="30">
-      <el-col :md="8" :lg="8" :xl="8">
+      <!-- 移动端查询搜索 -->
+      <el-col class="hidden-md-and-up">
         <el-collapse>
           <el-collapse-item title="查询" name="1">
             <el-row>
@@ -74,52 +76,125 @@
           </el-collapse-item>
         </el-collapse>
       </el-col>
-
+      <!-- 搜索结果 -->
       <el-col :xs="24" :sm="24" :md="16" :lg="16" :xl="16">
 
-          <div :span="24" v-for="(item,index) in books.list" :key="index" class="book">
-            <el-card shadow="hover">
-              <div class="book-main">
-                <div class="book-img">
-                  <a :href="item.dataHref" target="_blank"><img :src="item.imgUrl" :alt="item.imgDesc"/></a>
-                </div>
-                <div class="book-content">
-                  <h2 class="pointer">{{ item.title }}</h2>
-                  <h2>{{ item.originTitle }}</h2>
-                  <h3>{{ item.subTitle }}</h3>
-                  <p>{{ item.author }}</p>
-                  <p>{{ item.publisher }}/{{ $filters.formatDate(item.pubdate) }}</p>
-                  <p>{{ item.price }}元</p>
-                  <p>{{ item.likes }}人推荐</p>
-                  <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
-                  <div class="button">
-                    <el-button>借阅</el-button>
-                  </div>
+        <div v-for="(item,index) in books.list" :key="index" class="book">
+          <el-card shadow="hover">
+            <div class="book-main">
+              <div class="book-img">
+                <a :href="item.dataHref" target="_blank"><img :src="item.imgUrl" :alt="item.imgDesc"/></a>
+              </div>
+              <div class="book-content">
+                <h2 class="pointer">{{ item.title }}</h2>
+                <h2>{{ item.originTitle }}</h2>
+                <h3>{{ item.subTitle }}</h3>
+                <p>{{ item.author }}</p>
+                <p>{{ item.publisher }}/{{ $filters.formatDate(item.pubdate) }}</p>
+                <p>{{ item.price }}元</p>
+                <p>{{ item.likes }}人推荐</p>
+                <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
+                <div class="button">
+                  <el-button>借阅</el-button>
                 </div>
               </div>
-            </el-card>
-          </div>
+            </div>
+          </el-card>
+        </div>
 
-        <el-pagination
-            :currentPage="books.current"
-            :page-size="books.size"
-            :page-sizes="[10, 50, 100, 300]"
-            :small="false"
-            :disabled="false"
-            :background="true"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="books.total"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            style="display: flex;justify-content: flex-end"
+        <el-empty description="还没有这方面的书籍" v-show="books.list.length === 0"/>
+
+        <el-pagination class="hidden-sm-and-down"
+                       hide-on-single-page
+                       :currentPage="books.current"
+                       :page-size="books.size"
+                       :page-sizes="[10, 50, 100, 300]"
+                       :small="false"
+                       :disabled="false"
+                       :background="true"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="books.total"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       style="justify-content: flex-end"
         />
 
-        <el-row>
-          <el-col :span="24">
-          </el-col>
-        </el-row>
-      </el-col>
+        <el-pagination class="hidden-md-and-up"
+                       hide-on-single-page
+                       :currentPage="books.current"
+                       :page-size="books.size"
+                       :page-sizes="[10, 50, 100, 300]"
+                       :small="false"
+                       :disabled="false"
+                       :background="true"
+                       layout="prev, pager, next"
+                       :total="books.total"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange"
+                       style="justify-content: center"
+        />
 
+
+      </el-col>
+      <!-- 桌面端右侧 -->
+      <el-col :span="8" class="hidden-sm-and-down">
+        <el-card>
+          <div style="height: 30px;">
+            <span>热门标签</span>
+          </div>
+          <div class="tag-list">
+            <el-space wrap>
+              <el-tag
+                  v-for="(item,index) in hotTagsData"
+                  :key="index"
+                  :effect="searchForm.tagId.indexOf(item.tagId) > -1 ? 'dark' : 'plain'"
+                  @click="onChange(item.tagId,true)"
+              >
+                {{ item.tagName }}
+              </el-tag>
+            </el-space>
+          </div>
+        </el-card>
+
+        <el-card style="margin: 20px 0;">
+          <div style="height: 30px;">
+            <span>分类</span>
+          </div>
+          <div class="book-type">
+            <el-select placeholder="请选择分类"
+                       v-model="searchForm.bookType"
+            >
+              <el-option value="">请选择</el-option>
+              <el-option
+                  v-for="item in bookTypeList"
+                  :key="item.id"
+                  :label="item.typeName"
+                  :value="item.id"
+              ></el-option>
+            </el-select>
+            &nbsp;&nbsp;&nbsp;<el-button @click="init">搜索</el-button>
+          </div>
+
+          <div style="line-height: 50px;">
+            <span>全部标签</span>
+          </div>
+
+          <div class="all-tag">
+            <el-space wrap>
+              <el-tag
+                  v-for="(item,index) in allTag"
+                  :key="index"
+                  :effect="searchForm.tagId.indexOf(item.id) > -1 ? 'dark' : 'plain'"
+                  @click="onChange(item.id)"
+              >
+                {{ item.tagName }}
+              </el-tag>
+            </el-space>
+          </div>
+
+        </el-card>
+
+      </el-col>
 
     </el-row>
   </div>
@@ -127,15 +202,16 @@
 </template>
 
 <script setup>
-import {Refresh,Search} from '@element-plus/icons-vue'
-import { getBooks, getBookTagList, getBookTypeList} from "../api/book";
-import {onBeforeMount, reactive} from "vue";
-import {ref} from "vue";
-import {ElMessage} from "element-plus";
+import {Refresh, Search} from '@element-plus/icons-vue'
+import {getAllTags, getBooks, getBookTagList, getBookTypeList, hotTags} from "../api/book";
+import {onBeforeMount, reactive, ref} from "vue";
+import HomeMenu from "../components/Menu.vue";
 
 onBeforeMount(() => {
   init()
   getBookType()
+  getHotTags()
+  getAllTag()
 })
 const book = ref({
   author: "",
@@ -213,7 +289,7 @@ const search = ref(null)
 const searchForm = reactive({
   title: null,
   author: null,
-  brand:null,
+  brand: null,
   isbn10: null,
   isbn13: null,
   bookType: null,
@@ -223,7 +299,34 @@ const resetSearch = (form) => {
   form.resetFields()
   init()
 }
+//--------------------------------------------- 标签
+const hotTagsData = ref()
+const getHotTags = () => {
+  hotTags(10).then(res => {
+    hotTagsData.value = res.data
+  })
+}
+const allTag = ref([])
+const getAllTag = () => {
+  getAllTags().then(res => {
+    allTag.value = res.data
+  })
+}
 
+const onChange = (id,isSearch) => {
+  //没有添加，有就删除
+  let index = searchForm.tagId.indexOf(id)
+  if (index > -1) {
+    searchForm.tagId.splice(index, 1)
+  } else {
+    searchForm.tagId.push(id)
+  }
+  if(isSearch){
+    init()
+  }
+}
+
+//----------------------------------------------------------------------------- 分页
 const handleSizeChange = (val) => {
   page.size = val
   init()
@@ -245,6 +348,7 @@ const handleCurrentChange = (val) => {
 
 .book {
   margin-bottom: 20px;
+
   img {
     height: 200px;
     width: 142px;
