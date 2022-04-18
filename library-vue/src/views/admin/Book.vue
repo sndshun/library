@@ -76,8 +76,8 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button type="primary" :icon="Plus" plain @click="add(editForm,addBook)">添加</el-button>
-        <el-button type="danger" :icon="Delete" :disabled="pageData.batchDelete" plain @click="batchDel">删除&nbsp;
+        <el-button type="primary" :icon="Plus" plain @click="add(editForm,addBook)" v-permission="'book:add'">添加</el-button>
+        <el-button type="danger" :icon="Delete" :disabled="pageData.batchDelete" plain @click="batchDel" v-permission="'book:del'">删除&nbsp;
           <b v-show="selectList.length">
             ({{ selectList.length }})
           </b>
@@ -101,9 +101,9 @@
       <el-table-column label="操作" fixed="right" width="280">
         <template #default="scope">
           <el-button size="small" @click="details(scope.row.id)">详情</el-button>
-          <el-button size="small" @click="edit(editForm,scope.row,updBook)">编辑</el-button>
-          <el-button size="small" type="success" @click="tagEdit(scope.row.id)">标签</el-button>
-          <el-button size="small" type="danger" @click="del(scope.row.id)">删除</el-button>
+          <el-button size="small" @click="edit(editForm,scope.row,updBook)" v-permission="'book:upd'">编辑</el-button>
+          <el-button size="small" type="success" @click="tagEdit(scope.row.id)" v-permission="'book>tag:upd'">标签</el-button>
+          <el-button size="small" type="danger" @click="del(scope.row.id)" v-permission="'book:del'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

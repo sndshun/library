@@ -156,7 +156,7 @@
           </div>
         </el-card>
 
-        <el-card style="margin: 20px 0;">
+        <el-card style="margin: 10px 0;">
           <div style="height: 30px;">
             <span>分类</span>
           </div>
@@ -193,6 +193,13 @@
           </div>
 
         </el-card>
+
+        <el-card style="margin: 10px 0;">
+          <div style="height: 30px;">
+            <span>上月借阅排行</span>
+          </div>
+        </el-card>
+
 
       </el-col>
 

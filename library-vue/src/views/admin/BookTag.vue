@@ -27,8 +27,8 @@
 
     <el-row>
       <el-col :span="24">
-        <el-button type="primary" :icon="Plus" plain @click="add(editForm,addBookTag)">添加</el-button>
-        <el-button type="danger" :icon="Delete" :disabled="pageData.batchDelete" plain @click="batchDel">删除&nbsp;
+        <el-button type="primary" :icon="Plus" plain @click="add(editForm,addBookTag)" v-permission="'bookTag:add'">添加</el-button>
+        <el-button type="danger" :icon="Delete" :disabled="pageData.batchDelete" plain @click="batchDel" v-permission="'bookTag:del'">删除&nbsp;
           <b v-show="selectList.length">
             ({{ selectList.length }})
           </b>
@@ -47,8 +47,8 @@
       <el-table-column label="操作" fixed="right" width="220">
         <template #default="scope">
           <el-button size="small" @click="details(scope.row)">详情</el-button>
-          <el-button size="small" @click="edit(editForm,scope.row,updBookTag)">编辑</el-button>
-          <el-button size="small" type="danger" @click="del(scope.row.id)">删除</el-button>
+          <el-button size="small" @click="edit(editForm,scope.row,updBookTag)" v-permission="'bookTag:upd'">编辑</el-button>
+          <el-button size="small" type="danger" @click="del(scope.row.id)" v-permission="'bookTag:del'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

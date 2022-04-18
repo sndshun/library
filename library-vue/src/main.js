@@ -9,6 +9,7 @@ import 'element-plus/theme-chalk/display.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import 'element-plus/theme-chalk/display.css'
 
+import directives from "./directives";
 import * as filters from './utils/filters'
 
 import './assets/css/reset.css'
@@ -20,8 +21,9 @@ import './permission'
 const app = createApp(App)
 app.config.globalProperties.$filters=filters
 
+
 app
-    // .use(components)
+    .use(directives)
     .use(Element,{
         locale: zhCn,
     })
