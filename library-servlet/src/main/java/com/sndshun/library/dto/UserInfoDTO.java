@@ -16,12 +16,13 @@ import java.util.Set;
 @Data
 public class UserInfoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
-
     private Integer id;
     private String name;
     private String phone;
     private Integer sex;
     private String address;
+    private String email;
+    private String profile;
     private Set<String> menus;
     private Set<String> permissions;
     private Set<String> roles;

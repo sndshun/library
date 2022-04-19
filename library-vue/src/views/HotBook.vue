@@ -1,13 +1,12 @@
 <template>
-  <home-menu/>
+  <library-header/>
   <div class="container">
-    <h1>首页</h1>
+    <h1>热门图书</h1>
   </div>
 </template>
 
 <script setup>
-import HomeMenu from '../components/LibraryHeader.vue'
-
+import LibraryHeader from '../components/LibraryHeader.vue'
 </script>
 
 <style scoped>

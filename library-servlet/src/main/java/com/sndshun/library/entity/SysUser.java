@@ -45,6 +45,15 @@ public class SysUser implements Serializable {
 
     private String address;
     /**
+     * 邮箱
+     */
+
+    private String email;
+    /**
+     * 头像
+     */
+    private String profile;
+    /**
      * 更新时间
      */
 

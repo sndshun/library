@@ -49,8 +49,8 @@ export const userStore = defineStore('user', {
                 clearLibrary()
                 clearRememberMeLibrary()
             }else {
-                const {id,name,sex,phone,address,roles,menus,permissions} =res.data;
-                this.userInfo={id,name,sex,phone,address,roles}
+                const {id,name,sex,phone,address,roles,menus,permissions,email,profile} =res.data;
+                this.userInfo={id,name,sex,phone,address,roles,email,profile}
                 this.userPermission=permissions
 
                 let menu=filterAsyncRouter(routerList,menus)

@@ -11,6 +11,8 @@
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
         <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="profile" column="profile" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -21,6 +23,8 @@
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
         <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="profile" column="profile" jdbcType="VARCHAR"/>
         <collection property="menus" ofType="String">
             <id property="menus" column="menu_code"/>
         </collection>
@@ -34,10 +38,11 @@
 
 
     <select id="passwordLogin" resultMap="SysUserMap">
-        select u.id, u.name, u.phone, u.sex, u.address
+        select u.id, u.name, u.phone, u.sex, u.address, u.email,at.img_url profile
         from library.sys_user_auths a
                  left join library.sys_user u
                            on u.id = a.user_id
+        left join library.attachment at on at.id=u.profile
         where (a.identity_type = 'ID' or a.identity_type = 'EMAIL')
           and a.identifier = #{username}
           and a.credential = #{password}
@@ -51,7 +56,8 @@
                u.address,
                p.menu_code,
                p.permission_code,
-               r.role_name
+               r.role_name,
+               u.email,a.img_url profile
         FROM library.sys_user u
                  LEFT JOIN library.sys_user_role ur
                            on u.id = ur.user_id
@@ -61,6 +67,7 @@
                            on rp.role_id = r.id
                  LEFT JOIN library.sys_permission p
                            on p.id = rp.perms_id
+                 left join library.attachment a on a.id=u.profile
         WHERE u.id = #{id}
     </select>
 

@@ -1,9 +1,16 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {shallowRef} from 'vue'
 import Home from "../views/Home.vue";
 import layout from '../views/layout/Index.vue'
 
 export const baseRouters = [
+
+    {
+        path: '/login'
+        , name: '登录'
+        , component: () => import('../views/Login.vue')
+        , meta: {title: '登录'}
+        , hidden: true
+    },
     {
         path: '/'
         , name: 'home'
@@ -12,10 +19,31 @@ export const baseRouters = [
         , hidden: true
     },
     {
-        path: '/login'
-        , name: '登录'
-        , component: () => import('../views/Login.vue')
-        , meta: {title: '登录'}
+        path: '/search'
+        , name: '书籍搜索'
+        , component: () => import('../views/SearchBook.vue')
+        , meta: {title: '书籍检索'}
+        , hidden: true
+    },
+    {
+        path: '/hot'
+        , name: '热门图书'
+        , component: () => import('../views/HotBook.vue')
+        , meta: {title: '热门图书'}
+        , hidden: true
+    },
+    {
+        path: '/borrow'
+        , name: '借阅记录'
+        , component: () => import('../views/Borrowing.vue')
+        , meta: {title: '我的借阅'}
+        , hidden: true
+    },
+    {
+        path: '/info'
+        , name: '个人信息'
+        , component: () => import('../views/UserInfo.vue')
+        , meta: {title: '我的借阅'}
         , hidden: true
     }
 

@@ -6,7 +6,7 @@
       </div>
       <el-dropdown>
         <el-avatar class="pointer" fit="cover" shape="circle" :size="50"
-                   src="http://localhost:8081/file/2022/20220416145818502986.jpg"/>
+                   :src="userInfo.profile"/>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="router.push('/')">主页</el-dropdown-item>

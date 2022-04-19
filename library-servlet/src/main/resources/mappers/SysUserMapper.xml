@@ -10,6 +10,8 @@
         <result property="address" column="address" jdbcType="VARCHAR"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="profile" column="profile" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--查询单个-->
@@ -20,7 +22,9 @@
                sex,
                address,
                update_time,
-               create_time
+               create_time,
+               email,
+               profile
         from library.sys_user
         where id = #{id}
     </select>
@@ -39,7 +43,9 @@
                sex,
                address,
                update_time,
-               create_time
+               create_time,
+               email,
+               profile
         from library.sys_user
         limit #{ew.start}, #{ew.size}
     </select>
@@ -47,7 +53,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="SysUserMap">
         select
-        id, name, phone, sex, address, update_time, create_time
+        id, name, phone, sex, address, update_time, create_time, email, profile
         from library.sys_user
         <where>
             <if test="id != null">
@@ -70,6 +76,12 @@
             </if>
             <if test="createTime != null">
                 and create_time = #{createTime}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="profile != null and profile != ''">
+                and profile = #{profile}
             </if>
         </where>
     </select>
@@ -96,6 +108,12 @@
             <if test="createTime != null">
                 create_time,
             </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="profile != null and profile != ''">
+                profile,
+            </if>
         </trim>
         values
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -117,28 +135,34 @@
             <if test="createTime != null">
                 #{createTime},
             </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="profile != null and profile != ''">
+                #{profile},
+            </if>
         </trim>
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into library.sys_user(name, phone, sex, address, update_time, create_time)
+        insert into library.sys_user(name, phone, sex, address, update_time, create_time, email, profile)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.name}, #{entity.phone}, #{entity.sex}, #{entity.address}, #{entity.updateTime},
-            #{entity.createTime})
+            #{entity.createTime}, #{entity.email}, #{entity.profile})
         </foreach>
     </insert>
 
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into library.sys_user(name, phone, sex, address, update_time, create_time)
+        insert into library.sys_user(name, phone, sex, address, update_time, create_time, email, profile)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.name}, #{entity.phone}, #{entity.sex}, #{entity.address}, #{entity.updateTime},
-            #{entity.createTime})
+            #{entity.createTime}, #{entity.email}, #{entity.profile})
         </foreach>
         on duplicate key update
         name = values(name) , phone = values(phone) , sex = values(sex) , address = values(address) , update_time =
-        values(update_time) , create_time = values(create_time)
+        values(update_time) , create_time = values(create_time) , email = values(email) , profile = values(profile)
     </insert>
 
     <!--通过主键修改数据-->
@@ -162,6 +186,12 @@
             </if>
             <if test="createTime != null">
                 create_time = #{createTime},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="profile != null and profile != ''">
+                profile = #{profile},
             </if>
         </set>
         where id = #{id}

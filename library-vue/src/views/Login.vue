@@ -82,7 +82,7 @@ function handleSubmit() {
           clearRememberMeLibrary()
         }
 
-        router.push('/admin');
+        router.push('/');
 
       })
 
