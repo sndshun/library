@@ -1,83 +1,9 @@
 <template>
-  <home-menu/>
+  <home-menu v-model:title="searchForm.title" v-model:searchForm="searchForm" @searchBook="init" />
 
   <div class="container">
     <el-row :gutter="30">
 
-      <!-- 移动端查询搜索 -->
-      <el-col class="hidden-md-and-up">
-        <el-collapse>
-          <el-collapse-item title="查询" name="1">
-            <el-row>
-              <el-col :span="24">
-                <el-form :inline="true" :model="searchForm" ref="search" class="form-inline">
-                  <el-form-item label="书籍" prop="title">
-                    <el-input v-model="searchForm.title"
-                              placeholder="请输入书籍名称"
-                              autocomplete="off"
-                    />
-                  </el-form-item>
-                  <el-form-item label="作者" prop="author">
-                    <el-input v-model="searchForm.author"
-                              placeholder="请输入作者名称"
-                              autocomplete="off"
-                    />
-                  </el-form-item>
-                  <el-form-item label="丛书" prop="author">
-                    <el-input v-model="searchForm.brand"
-                              placeholder="请输入丛书"
-                              autocomplete="off"
-                    />
-                  </el-form-item>
-                  <el-form-item label="isbn10" prop="isbn10">
-                    <el-input v-model="searchForm.isbn10"
-                              placeholder="请输入isbn10"
-                              autocomplete="off"
-                    />
-                  </el-form-item>
-                  <el-form-item label="isbn13" prop="isbn13">
-                    <el-input v-model="searchForm.isbn13"
-                              placeholder="请输入isbn13"
-                              autocomplete="off"
-                    />
-                  </el-form-item>
-                  <el-form-item label="分类" prop="bookType">
-                    <el-select placeholder="请选择分类" v-model="searchForm.bookType">
-                      <el-option
-                          v-for="item in bookTypeList"
-                          :key="item.id"
-                          :label="item.typeName"
-                          :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item label="标签" prop="tagId">
-                    <el-select
-                        multiple
-                        filterable
-                        remote
-                        :remote-method="remoteMethod"
-                        placeholder="请选择标签"
-                        :loading="tagLoading"
-                        v-model="searchForm.tagId">
-                      <el-option
-                          v-for="item in bookTagOptions"
-                          :key="item.id"
-                          :label="item.tagName"
-                          :value="item.id"
-                      ></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item>
-                    <el-button type="primary" :icon="Search" @click="init">搜索</el-button>
-                    <el-button :icon="Refresh" @click="resetSearch(search)">重置</el-button>
-                  </el-form-item>
-                </el-form>
-              </el-col>
-            </el-row>
-          </el-collapse-item>
-        </el-collapse>
-      </el-col>
       <el-col :span="2" class="hidden-sm-and-down"></el-col>
       <!-- 搜索结果 -->
       <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
@@ -252,12 +178,14 @@
 </template>
 
 <script setup>
-import {Refresh, Search} from '@element-plus/icons-vue'
-import {getAllTags, getBooks, getBookTagList, getBookTypeList, hotTags} from "../api/book";
+import {getAllTags, getBooks, getBookTypeList, hotTags} from "../api/book";
 import {onBeforeMount, reactive, ref} from "vue";
 import HomeMenu from "../components/LibraryHeader.vue";
+import {useRoute} from "vue-router";
 
+const route=useRoute()
 onBeforeMount(() => {
+  searchForm.title= route.query.title
   init()
   getBookType()
   getHotTags()
@@ -297,6 +225,7 @@ const books = reactive({
   pages: 0
 })
 const init = () => {
+
   let params = {
     ...page,
     ...searchForm
@@ -316,30 +245,30 @@ const init = () => {
 }
 
 //----------------------------------------------------------------------------- 查询条件
-const tagLoading = ref(false)
-const bookTagOptions = ref([])
-const remoteMethod = (query) => {
-  tagLoading.value = true
-  if (query) {
-    // bookTagOptions.value = bookTagList.value.filter((item) => {
-    //   return item.tagName.toLowerCase().includes(query.toLowerCase())
-    // })
-    getBookTagList({tagName: query}).then(res => {
-      bookTagOptions.value = res.data
-      tagLoading.value = false
-    })
-  } else {
-    bookTagOptions.value = []
-    tagLoading.value = false
-  }
-}
+// const tagLoading = ref(false)
+// const bookTagOptions = ref([])
+// const remoteMethod = (query) => {
+//   tagLoading.value = true
+//   if (query) {
+//     // bookTagOptions.value = bookTagList.value.filter((item) => {
+//     //   return item.tagName.toLowerCase().includes(query.toLowerCase())
+//     // })
+//     getBookTagList({tagName: query}).then(res => {
+//       bookTagOptions.value = res.data
+//       tagLoading.value = false
+//     })
+//   } else {
+//     bookTagOptions.value = []
+//     tagLoading.value = false
+//   }
+// }
 const bookTypeList = ref([])
 const getBookType = () => {
   getBookTypeList().then(res => {
     bookTypeList.value = res.data
   })
 }
-const search = ref(null)
+// const search = ref(null)
 const searchForm = reactive({
   title: null,
   author: null,
@@ -349,10 +278,10 @@ const searchForm = reactive({
   bookType: null,
   tagId: [],
 })
-const resetSearch = (form) => {
-  form.resetFields()
-  init()
-}
+// const resetSearch = (form) => {
+//   form.resetFields()
+//   init()
+// }
 //--------------------------------------------- 标签
 const hotTagsData = ref()
 const getHotTags = () => {
