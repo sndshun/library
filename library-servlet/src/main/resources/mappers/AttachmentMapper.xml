@@ -77,8 +77,7 @@
     <!--通过实体作为筛选条件查询-->
     <select id="queryAll" resultMap="AttachmentMap">
         select
-        id, img_name, suffix, size, img_title, img_desc, img_url, absolute_path, is_delete, delete_time, delete_by,
-        create_by, update_by, create_time, module, update_time, data_href
+        id, img_title, img_desc, img_url, data_href
         from library.attachment
         <where>
             <if test="id != null and id != ''">

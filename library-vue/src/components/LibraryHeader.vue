@@ -3,12 +3,12 @@
 
     <!--头部导航-->
     <div class="home-header">
-      <div class="logo">
+      <div @click="router.push('/')" class="logo">
         <img src="../assets/img/logo.png" width="100" height="100"/>
       </div>
       <div class="search hidden-sm-and-down">
         <div class="input">
-          <input type="text" placeholder="Search" v-model="searchForm.title">
+          <input type="text" placeholder="Search" v-model.trim="searchForm.title" @keydown.enter="pushSearch">
           <button @click="pushSearch">
             <el-icon>
               <Search/>
@@ -30,7 +30,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="router.push('/login')">&nbsp;&nbsp; 登录 &nbsp;&nbsp;</el-dropdown-item>
-              <el-dropdown-item>&nbsp;&nbsp; 注册 &nbsp;&nbsp;</el-dropdown-item>
+              <el-dropdown-item @click="router.push('/reg')">&nbsp;&nbsp; 注册 &nbsp;&nbsp;</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -47,11 +47,14 @@
           </template>
         </el-dropdown>
 
-        <span class="hidden-md-and-up" @click="drawer=true">
-        <el-icon :size="24">
-          <fold/>
-        </el-icon>
-      </span>
+        <el-affix :offset="20">
+          <span class="hidden-md-and-up" @click="drawer=true">
+             <el-icon :size="24">
+              <fold/>
+            </el-icon>
+          </span>
+        </el-affix>
+
       </div>
     </div>
     <el-affix :offset="0">
@@ -70,7 +73,6 @@
         <el-menu-item index="/borrow">我的借阅</el-menu-item>
         <el-menu-item index="/info">个人信息</el-menu-item>
       </el-menu>
-
     </el-affix>
     <el-drawer
         custom-class="drawer"
@@ -97,7 +99,7 @@
 
 
       <div class="input">
-        <input type="text" placeholder="请输入书名" v-model="searchForm.title">
+        <input type="text" placeholder="请输入书名" v-model.trim="searchForm.title">
         <button @click="pushForm">
           <el-icon>
             <Search/>
@@ -186,7 +188,7 @@
           <div class="account" @click="router.push('/login')">
             登录
           </div>
-          <div class="account" @click="router.push('/login')">
+          <div class="account" @click="router.push('/reg')">
             注册
           </div>
         </el-collapse-item>
@@ -198,10 +200,10 @@
 </template>
 
 <script setup>
-import {Fold, Search, Setting, ShoppingCartFull, Refresh} from '@element-plus/icons-vue'
-import {onBeforeMount, ref, reactive} from "vue";
+import {Fold, Refresh, Search, Setting, ShoppingCartFull} from '@element-plus/icons-vue'
+import {onBeforeMount, ref} from "vue";
 import {storeToRefs} from "pinia/dist/pinia";
-import {userStore} from "../store";
+import {sysStore, userStore} from "../store";
 import {ElMessage} from "element-plus";
 import router from "../router";
 import {useRoute} from "vue-router";
@@ -209,10 +211,10 @@ import {getBookTagList, getBookTypeList} from "../api/book";
 
 onBeforeMount(() => {
   getBookType()
-  searchForm.title=route.query.title
+  searchForm.title = route.query.title
 })
 
-const emit = defineEmits(['update:title','update:searchForm','searchBook'])
+const emit = defineEmits(['searchBook'])
 
 const route = useRoute()
 
@@ -236,11 +238,7 @@ const pushSearch = () => {
   router.push({
     path: '/search'
     , name: '书籍搜索'
-    , query: {
-      title: searchForm.title
-    }
   })
-  emit('update:title', searchForm.title)
   emit('searchBook')
 }
 const pushForm = () => {
@@ -248,7 +246,6 @@ const pushForm = () => {
     path: '/search'
     , name: '书籍搜索'
   })
-  emit('update:searchForm', searchForm)
   emit('searchBook')
 }
 
@@ -277,15 +274,8 @@ const getBookType = () => {
   })
 }
 const search = ref(null)
-const searchForm = reactive({
-  title: null,
-  author: null,
-  brand: null,
-  isbn10: null,
-  isbn13: null,
-  bookType: null,
-  tagId: [],
-})
+
+const {searchForm} = storeToRefs(sysStore())
 const resetSearch = (form) => {
   form.resetFields()
 }

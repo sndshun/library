@@ -2,6 +2,8 @@ package com.sndshun.library.entity;
 
 import java.util.Date;
 import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,5 +65,13 @@ public class SysUser implements Serializable {
      */
 
     private Date createTime;
+
+    private Set<SysUserRole> roles;
+
+    /**
+     * 角色id 条件查询使用
+     */
+    private Integer roleId;
+
 
 }

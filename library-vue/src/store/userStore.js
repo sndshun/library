@@ -21,7 +21,6 @@ function filterAsyncRouter(asyncRouterMap, menus) {
             })
             return (route.children && route.children.length)
         } else {
-            console.log(menus.indexOf(route.menu)>-1)
             if(!route.menu)return true
             return menus.indexOf(route.menu)>-1
         }
@@ -44,13 +43,13 @@ export const userStore = defineStore('user', {
             if (res.code !== 200) {
                 ElMessage.error(res.message)
                 this.userInfo=null
-                this.userMenu=null
-                this.userPermission=null
+                this.userMenu=[]
+                this.userPermission=[]
                 clearLibrary()
                 clearRememberMeLibrary()
             }else {
-                const {id,name,sex,phone,address,roles,menus,permissions,email,profile} =res.data;
-                this.userInfo={id,name,sex,phone,address,roles,email,profile}
+                const {id,name,sex,phone,address,roles,menus,permissions,email,profile,rolesName} =res.data;
+                this.userInfo={id,name,sex,phone,address,roles,email,profile,rolesName}
                 this.userPermission=permissions
 
                 let menu=filterAsyncRouter(routerList,menus)
@@ -65,9 +64,9 @@ export const userStore = defineStore('user', {
         async logout() {
             let res= await logout()
             if (res.data) {
-                this.userInfo=null
-                this.userMenu=null
-                this.userPermission=null
+                this.userInfo= null
+                this.userMenu=[]
+                this.userPermission=[]
                 clearLibrary()
                 clearRememberMeLibrary()
             }

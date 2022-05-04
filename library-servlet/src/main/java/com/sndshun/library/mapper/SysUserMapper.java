@@ -30,7 +30,7 @@ public interface SysUserMapper {
      *
      * @return 总条数
      */
-    int queryCount();
+    int queryCount( @Param("vo") SysUser sysUser);
 
     /**
      * 查询指定行数据
@@ -38,7 +38,7 @@ public interface SysUserMapper {
      * @param page 分页工具类
      * @return 对象列表
      */
-    List<SysUser> queryAllByLimit(@Param("ew") PageUtil<SysUser> page);
+    List<SysUser> queryAllByLimit(@Param("ew") PageUtil<SysUser> page, @Param("vo") SysUser sysUser);
 
 
     /**
@@ -88,6 +88,12 @@ public interface SysUserMapper {
      * @return 影响行数
      */
     int deleteById(Integer id);
-
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatch(@Param("entities") List<Integer> ids);
 }
 

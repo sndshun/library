@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * (Attachment)表控制层
@@ -27,6 +28,16 @@ public class AttachmentController {
     @Resource
     private AttachmentService attachmentService;
 
+
+    /**
+     * 获取轮播图
+     * @return
+     */
+    @GetMapping("banner")
+    public Result<List<Attachment>> banner(Attachment attachment) {
+        attachment.setModule(UploadModuleConfig.BANNER.getModuleName());
+        return Result.success(this.attachmentService.list(attachment));
+    }
 
     @GetMapping("page")
     public Result<PageUtil<Attachment>> page(PageUtil<Attachment> pageUtil) {
@@ -57,6 +68,14 @@ public class AttachmentController {
         return Result.success(this.attachmentService.removeById(id));
     }
 
+    @PostMapping("profile")
+    public Result<Attachment> profile(MultipartFile file,Integer uid) {
+        Attachment attachment = this.attachmentService.saveData(file, UploadModuleConfig.USER_PROFILE, uid);
+        Attachment returnAttachment = new Attachment();
+        returnAttachment.setId(attachment.getId());
+        returnAttachment.setImgUrl(attachment.getImgUrl());
+        return Result.success(returnAttachment);
+    }
     @PostMapping("bookCoverUpload")
     public Result<Attachment> upload(MultipartFile file,Integer uid) {
         Attachment attachment = this.attachmentService.saveData(file, UploadModuleConfig.BOOK_COVER, uid);

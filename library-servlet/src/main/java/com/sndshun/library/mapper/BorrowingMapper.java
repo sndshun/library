@@ -18,6 +18,14 @@ import java.util.List;
 public interface BorrowingMapper {
 
     /**
+     * 通过ID查询借阅书籍
+     *
+     * @param id 主键
+     * @return 实例对象
+     */
+    List<Borrowing> borrowingBooks(Integer id);
+
+    /**
      * 通过ID查询单条数据
      *
      * @param id 主键
@@ -30,15 +38,17 @@ public interface BorrowingMapper {
      *
      * @return 总条数
      */
-    int queryCount();
+    int queryCount(String title,String name);
 
     /**
      * 查询指定行数据
      *
      * @param page 分页工具类
+     * @param name
+     * @param title
      * @return 对象列表
      */
-    List<Borrowing> queryAllByLimit(@Param("ew") PageUtil<Borrowing> page);
+    List<Borrowing> queryAllByLimit(@Param("ew") PageUtil<Borrowing> page,String title,String name);
 
 
     /**

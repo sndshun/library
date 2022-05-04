@@ -17,6 +17,16 @@ export const sysStore = defineStore('sys', {
                     open: true
                 }
             ],
+            //搜索菜单
+            searchForm :{
+                title: '',
+                author: '',
+                brand: '',
+                isbn10: '',
+                isbn13: '',
+                bookType: '',
+                tagId: [],
+            }
         }
     },
     actions: {
@@ -33,13 +43,8 @@ export const sysStore = defineStore('sys', {
                 } else {
                     this.mainAni = 'left'
                 }
-                //禁止添加白名单路由
-                const flag= baseRouters.some(item => {
-                    if (item.path === breadcrumb.path) {
-                        return true
-                    }
-                })
-                if (index === -1&&!flag) {
+
+                if (index === -1&&breadcrumb.isShow==true) {
                     this.breadcrumb.push(breadcrumb)
                 } else {
                     this.mainIndex = index

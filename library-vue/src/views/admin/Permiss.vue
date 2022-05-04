@@ -1,5 +1,8 @@
 <template>
   <el-card>
+    <el-card shadow="never">
+      <h2>修改权限会清除登录用户缓存，请勿频繁修改</h2>
+    </el-card>
     <el-table
         :data="roles"
         style="width: 100%"

@@ -35,7 +35,7 @@ public interface SysUserService {
      *
      * @param page 分页工具类
      */
-    void page(PageUtil<SysUser> page);
+    void page(PageUtil<SysUser> page,SysUser sysUser);
 
     /**
      * 新增数据
@@ -51,14 +51,14 @@ public interface SysUserService {
      * @param sysUser 实例对象
      * @return 实例对象
      */
-    boolean update(SysUser sysUser);
+    boolean update(SysUser sysUser,String library);
 
     /**
      * 通过主键删除数据
      *
-     * @param id 主键
+     * @param ids 主键
      * @return 是否成功
      */
-    boolean removeById(Integer id);
+    boolean removeById(List<Integer> ids);
 
 }

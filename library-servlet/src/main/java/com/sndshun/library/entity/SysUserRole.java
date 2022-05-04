@@ -55,4 +55,9 @@ public class SysUserRole implements Serializable {
 
     private Integer createBy;
 
+    /**
+     * 附加：角色名
+     */
+    private String description;
+
 }

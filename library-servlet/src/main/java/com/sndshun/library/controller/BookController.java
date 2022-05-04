@@ -62,6 +62,7 @@ public class BookController {
 
     @PutMapping
     public Result<Boolean> update(@RequestBody Book book) {
+
         return Result.success(this.bookService.update(book));
     }
 

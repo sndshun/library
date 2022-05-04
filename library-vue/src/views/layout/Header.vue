@@ -10,7 +10,7 @@
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="router.push('/')">主页</el-dropdown-item>
-            <el-dropdown-item>个人信息</el-dropdown-item>
+            <el-dropdown-item @click="router.push('/info')">个人信息</el-dropdown-item>
             <el-dropdown-item>系统设置</el-dropdown-item>
             <el-dropdown-item @click="out()">注销</el-dropdown-item>
           </el-dropdown-menu>

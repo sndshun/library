@@ -88,6 +88,13 @@ public interface SysUserRoleMapper {
      * @return 影响行数
      */
     int deleteById(Integer id);
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatch(@Param("entities") List<Integer> ids);
 
 }
 

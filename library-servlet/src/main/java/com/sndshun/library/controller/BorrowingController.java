@@ -8,6 +8,8 @@ import com.sndshun.library.utils.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 借阅记录表(Borrowing)表控制层
@@ -24,10 +26,13 @@ public class BorrowingController {
     @Resource
     private BorrowingService borrowingService;
 
+    @RequestMapping("borrowingBooks")
+    public Result<List<Borrowing>> borrowingBooks(Integer id) {
+        return Result.success(borrowingService.borrowingBooks(id));
+    }
     @GetMapping("page")
-    public Result<PageUtil<Borrowing>> page(PageUtil<Borrowing> pageUtil) {
-        this.borrowingService.page(pageUtil);
-
+    public Result<PageUtil<Borrowing>> page(String title,String name,PageUtil<Borrowing> pageUtil) {
+        this.borrowingService.page(pageUtil,title,name);
         return Result.success(pageUtil);
     }
 
@@ -38,8 +43,9 @@ public class BorrowingController {
 
 
     @PostMapping
-    public Result<Boolean> insert(@RequestBody Borrowing borrowing) {
-        return Result.success(this.borrowingService.save(borrowing));
+    public Result<Boolean> insert(@RequestBody Borrowing borrowing,Integer currentNumber) {
+        borrowing.setStartTime(new Date());
+        return Result.success(this.borrowingService.save(borrowing,currentNumber));
     }
 
     @PutMapping

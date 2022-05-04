@@ -89,5 +89,12 @@ public interface SysUserAuthsMapper {
      */
     int deleteById(Integer id);
 
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatch(@Param("entities") List<Integer> ids);
 }
 

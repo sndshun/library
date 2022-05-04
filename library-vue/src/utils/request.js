@@ -8,7 +8,7 @@
  */
 import axios from "axios";
 
-import {ElLoading,ElMessage} from "element-plus";
+import {ElLoading, ElMessage, ElNotification} from "element-plus";
 import {getLibrary, getRememberMeLibrary} from "./auth";
 
 
@@ -49,7 +49,11 @@ request.interceptors.response.use(
         //在这里处理响应体中的状态码
         const code=r.code
         if (code != 200) {
-            ElMessage.error(r.message)
+            ElNotification.error({
+                title: '错误',
+                message: r.message,
+                position: 'top-right'
+            })
         }
         //返回统一响应返回体
         return Promise.resolve(r);
@@ -61,10 +65,10 @@ request.interceptors.response.use(
         //     path: '/login',
         //     query: { redirect: router.currentRoute.fullPath }
         //    });
-        ElMessage({
-            showClose: true,
-            message: '请求失败',
-            type: 'error',
+        ElNotification.error({
+            title: '错误',
+            message: '网络错误',
+            position: 'top-right'
         })
         return Promise.reject(error.response);
     }

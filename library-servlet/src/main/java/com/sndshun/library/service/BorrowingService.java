@@ -15,6 +15,14 @@ import java.util.List;
 public interface BorrowingService {
 
     /**
+     * 通过ID查询借阅书籍
+     *
+     * @param id 主键
+     * @return 实例对象
+     */
+    List<Borrowing> borrowingBooks(Integer id);
+
+    /**
      * 通过ID查询单条数据
      *
      * @param id 主键
@@ -35,7 +43,7 @@ public interface BorrowingService {
      *
      * @param page 分页工具类
      */
-    void page(PageUtil<Borrowing> page);
+    void page(PageUtil<Borrowing> page,String title,String name);
 
     /**
      * 新增数据
@@ -43,7 +51,7 @@ public interface BorrowingService {
      * @param borrowing 实例对象
      * @return 实例对象
      */
-    boolean save(Borrowing borrowing);
+    boolean save(Borrowing borrowing,Integer currentNumber);
 
     /**
      * 修改数据

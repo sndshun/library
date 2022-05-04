@@ -56,4 +56,17 @@ public class CacheConfig {
                 .maximumSize(10000)
                 .build();
     }
+    /**
+     * 邮件验证码
+     */
+    @Bean("emailCodeManager")
+    public Cache<String,String> emailCodeCache(){
+
+        return Caffeine.newBuilder()
+                // 设置最后一次访问后经过固定时间过期. 60秒
+                .expireAfterAccess(60L, TimeUnit.SECONDS)
+                .initialCapacity(100)
+                .maximumSize(10000)
+                .build();
+    }
 }

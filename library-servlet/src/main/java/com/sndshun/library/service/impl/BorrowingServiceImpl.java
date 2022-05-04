@@ -1,13 +1,17 @@
 package com.sndshun.library.service.impl;
 
 
+import com.sndshun.library.entity.Book;
+import com.sndshun.library.mapper.BookMapper;
 import com.sndshun.library.mapper.BorrowingMapper;
 import com.sndshun.library.entity.Borrowing;
+import com.sndshun.library.service.BookService;
 import com.sndshun.library.service.BorrowingService;
 import com.sndshun.library.utils.PageUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +24,14 @@ import java.util.List;
 public class BorrowingServiceImpl implements BorrowingService {
     @Resource
     private BorrowingMapper borrowingMapper;
+    @Resource
+    private BookMapper bookMapper;
+
+
+    @Override
+    public List<Borrowing> borrowingBooks(Integer id) {
+        return this.borrowingMapper.borrowingBooks(id);
+    }
 
     /**
      * 通过ID查询单条数据
@@ -49,9 +61,9 @@ public class BorrowingServiceImpl implements BorrowingService {
      * @param page 分页工具类
      */
     @Override
-    public void page(PageUtil<Borrowing> page) {
-        page.setTotal(this.borrowingMapper.queryCount());
-        List<Borrowing> list = this.borrowingMapper.queryAllByLimit(page);
+    public void page(PageUtil<Borrowing> page,String title,String name) {
+        page.setTotal(this.borrowingMapper.queryCount(title,name));
+        List<Borrowing> list = this.borrowingMapper.queryAllByLimit(page,title,name);
         page.setList(list);
     }
 
@@ -62,7 +74,11 @@ public class BorrowingServiceImpl implements BorrowingService {
      * @return 实例对象
      */
     @Override
-    public boolean save(Borrowing borrowing) {
+    public boolean save(Borrowing borrowing,Integer currentNumber) {
+        Book book = new Book();
+        book.setId(borrowing.getBookId());
+        book.setCurrentNumber(currentNumber-1);
+        this.bookMapper.update(book);
         return this.borrowingMapper.insert(borrowing) > 0;
     }
 
@@ -74,6 +90,17 @@ public class BorrowingServiceImpl implements BorrowingService {
      */
     @Override
     public boolean update(Borrowing borrowing) {
+        Book book = borrowing.getBook();
+
+        if(borrowing.getState()==1){
+            book.setCurrentNumber(book.getCurrentNumber()+1);
+            borrowing.setEndTime(new Date());
+        }else {
+            book.setCurrentNumber(book.getCurrentNumber()-1);
+        }
+
+        book.setId(borrowing.getBookId());
+        this.bookMapper.update(book);
         return this.borrowingMapper.update(borrowing) > 0;
     }
 

@@ -3,6 +3,7 @@ package com.sndshun.library.service.impl;
 
 import com.sndshun.library.mapper.SysRoleMapper;
 import com.sndshun.library.entity.SysRole;
+import com.sndshun.library.mapper.SysRolePermissionMapper;
 import com.sndshun.library.service.SysRoleService;
 import com.sndshun.library.utils.PageUtil;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,8 @@ import java.util.List;
 public class SysRoleServiceImpl implements SysRoleService {
     @Resource
     private SysRoleMapper sysRoleMapper;
+    @Resource
+    private SysRolePermissionMapper sysRolePermissionMapper;
 
     /**
      * 通过ID查询单条数据
@@ -85,6 +88,7 @@ public class SysRoleServiceImpl implements SysRoleService {
      */
     @Override
     public boolean removeById(Integer id) {
+        this.sysRolePermissionMapper.deleteById(id);
         return this.sysRoleMapper.deleteById(id) > 0;
     }
 }

@@ -195,7 +195,7 @@
     </el-dialog>
 
     <el-dialog
-        width="60%"
+        width="70%"
         :title="pageData.editType"
         @close="pageData.addBookDialog=false"
         v-model="pageData.editDialog">
@@ -335,10 +335,16 @@
             <wang-editor :content="book.summary" v-model:content="book.summary"></wang-editor>
           </div>
         </el-form-item>
+        <el-form-item label=".">
+
+        </el-form-item>
         <el-form-item label="原文摘录" prop="originalTexts">
           <div class="summary">
             <wang-editor :content="book.originalTexts" v-model:content="book.originalTexts"></wang-editor>
           </div>
+        </el-form-item>
+        <el-form-item label=".">
+
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit(editForm)">提交</el-button>
@@ -630,7 +636,7 @@ function testAddBook(isbn) {
       book.value.brand = temp.brand
       book.value.author = temp.author + (temp.translator ? '-[译]' + temp.translator : '')
       book.value.publisher = temp.publishing
-      book.value.pubdate = new Date(temp.published).getFullYear()
+      book.value.pubdate = new Date(temp.published.replace(/-/,"/"))
       book.value.bindng = temp.designed
       book.value.pages = parseInt(temp.pages)
       book.value.price = parseFloat(temp.price)

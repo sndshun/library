@@ -26,4 +26,11 @@ public interface LoginService {
      */
     UserInfoDTO getUserInfo(String token);
 
+    /**
+     *  用户注册
+     * @param userLoginDTO
+     * @return
+     */
+    boolean register(UserLoginDTO userLoginDTO);
+
 }

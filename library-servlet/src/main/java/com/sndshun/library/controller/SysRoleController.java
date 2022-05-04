@@ -2,12 +2,14 @@ package com.sndshun.library.controller;
 
 
 import com.sndshun.library.entity.SysRole;
+import com.sndshun.library.entity.SysUser;
 import com.sndshun.library.service.SysRoleService;
 import com.sndshun.library.utils.PageUtil;
 import com.sndshun.library.utils.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 用户角色表(SysRole)表控制层
@@ -24,6 +26,10 @@ public class SysRoleController {
     @Resource
     private SysRoleService sysRoleService;
 
+    @GetMapping("list")
+    public Result<List<SysRole>> list(SysRole sysRole) {
+        return Result.success(this.sysRoleService.list(null));
+    }
     @GetMapping("page")
     public Result<PageUtil<SysRole>> page(PageUtil<SysRole> pageUtil) {
         this.sysRoleService.page(pageUtil);

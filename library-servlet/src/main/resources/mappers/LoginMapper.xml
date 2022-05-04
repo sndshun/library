@@ -34,6 +34,9 @@
         <collection property="roles" ofType="String">
             <id property="roles" column="role_name"/>
         </collection>
+        <collection property="rolesName" ofType="String">
+            <id property="rolesName" column="description"/>
+        </collection>
     </resultMap>
 
 
@@ -54,10 +57,12 @@
                u.phone,
                u.sex,
                u.address,
+               u.email,
                p.menu_code,
                p.permission_code,
                r.role_name,
-               u.email,a.img_url profile
+               r.description,
+               a.img_url profile
         FROM library.sys_user u
                  LEFT JOIN library.sys_user_role ur
                            on u.id = ur.user_id

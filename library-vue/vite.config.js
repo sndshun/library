@@ -9,6 +9,7 @@ export default defineConfig({
         vue(),
     ],
     server: {
+        port: 3000,
         proxy: {
             '/api': {
                 target: 'http://localhost:8081',//后端的端口号

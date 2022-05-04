@@ -28,6 +28,9 @@ public enum ResultCode {
     USER_NOT_EXIST(20004, "用户不存在"),
     USER_HAS_EXISTED(20005, "用户已存在"),
     USER_LOGIN_OUT(20002, "登录认证已过期，请重新登录"),
+    REG_EMAIL_CODE_OUT(20003, "邮箱验证码已过期，请重新获取"),
+    //邮箱验证码不正确
+    REG_EMAIL_CODE_INVOKE(20004, "邮箱验证码不正确"),
     /* 业务错误：30001-39999 */
     SPECIFIED_QUESTIONED_USER_NOT_EXIST(30001, "某业务出现问题"),
 

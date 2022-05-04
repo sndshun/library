@@ -3,7 +3,7 @@ import {sysStore, userStore} from "./store";
 import {getLibrary, getRememberMeLibrary} from "./utils/auth";
 
 const whiteRouter = baseRouters.map(item => {
-    return item.path
+    return item.path;
 })
 router.beforeEach(async (to, from, next) => {
     const {userInfo, getInfo} = userStore()
@@ -17,6 +17,7 @@ router.beforeEach(async (to, from, next) => {
     setBreadcrumb({
         name: to.meta.title,
         path: to.path,
+        isShow:to.meta.routerBar
     })
 
 

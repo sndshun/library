@@ -1,8 +1,10 @@
 package com.sndshun.library.service.impl;
 
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.sndshun.library.common.config.ResultCode;
 import com.sndshun.library.common.exception.CommonJsonException;
+import com.sndshun.library.dto.UserInfoDTO;
 import com.sndshun.library.entity.SysRole;
 import com.sndshun.library.entity.SysRolePermission;
 import com.sndshun.library.mapper.SysRoleMapper;
@@ -12,7 +14,6 @@ import com.sndshun.library.utils.PageUtil;
 import com.sndshun.library.utils.Result;
 import com.sndshun.library.vo.RoleMenuPerVo;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,6 +32,9 @@ public class SysRolePermissionServiceImpl implements SysRolePermissionService {
     private SysRolePermissionMapper sysRolePermissionMapper;
     @Resource
     private SysRoleMapper sysRoleMapper;
+
+    @Resource
+    private Cache<String, UserInfoDTO> cache;
 
     /**
      * 查询角色及角色下的权限
@@ -100,6 +104,7 @@ public class SysRolePermissionServiceImpl implements SysRolePermissionService {
 
     /**
      * 修改角色权限
+     *
      * @param permissions
      * @param rid
      * @param name
@@ -124,7 +129,9 @@ public class SysRolePermissionServiceImpl implements SysRolePermissionService {
         if (permissions.size() > 0) {
             PUpd = sysRolePermissionMapper.updRolePer(permissions, rid, uid);
         }
-        return rUpd>0&&PUpd>0;
+        //清除缓存
+        cache.invalidateAll();
+        return rUpd > 0 && PUpd > 0;
     }
 
     /**

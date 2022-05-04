@@ -70,4 +70,9 @@ public class Borrowing implements Serializable {
 
     private Integer state;
 
+    private Book book;
+    /**
+     * 附加字段
+     */
+    private String name;
 }

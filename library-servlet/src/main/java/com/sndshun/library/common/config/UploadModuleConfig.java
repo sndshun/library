@@ -15,7 +15,10 @@ public enum UploadModuleConfig {
      * 富文本插入图片
      */
     BOOK_CONTENT("book_content","这是一个富文本插入图片"),
-
+    /**
+     * 轮播图
+     */
+    BANNER("banner","这是一个轮播图"),
     /**
      * 用户头像
      */

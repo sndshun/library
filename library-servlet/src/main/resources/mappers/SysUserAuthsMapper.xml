@@ -121,11 +121,10 @@
     </insert>
 
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into library.sys_user_auths(user_id, identity_type, identifier, credential, update_time, create_time)
+        insert into library.sys_user_auths(user_id, identity_type, identifier, credential)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.userId}, #{entity.identityType}, #{entity.identifier}, #{entity.credential}, #{entity.updateTime},
-            #{entity.createTime})
+            (#{entity.userId}, #{entity.identityType}, #{entity.identifier}, #{entity.credential})
         </foreach>
     </insert>
 
@@ -167,11 +166,19 @@
         where id = #{id}
     </update>
 
-    <!--通过主键删除-->
+    <!--通过用户id删除-->
     <delete id="deleteById">
         delete
         from library.sys_user_auths
-        where id = #{id}
+        where user_id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete
+        from library.sys_user_auths
+        where user_id in
+        <foreach collection="entities" item="entity" separator="," open="(" close=")">
+            #{entity}
+        </foreach>
     </delete>
 
 </mapper>

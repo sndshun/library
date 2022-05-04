@@ -171,7 +171,16 @@
     <delete id="deleteById">
         delete
         from library.sys_user_role
-        where id = #{id}
+        where user_id = #{id}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete
+        from library.sys_user_role
+        where user_id in
+        <foreach collection="entities" item="entity" separator="," open="(" close=")">
+            #{entity}
+        </foreach>
     </delete>
 
 </mapper>

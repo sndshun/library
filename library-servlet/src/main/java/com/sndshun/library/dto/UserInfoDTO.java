@@ -26,5 +26,5 @@ public class UserInfoDTO implements Serializable {
     private Set<String> menus;
     private Set<String> permissions;
     private Set<String> roles;
-
+    private Set<String> rolesName;
 }

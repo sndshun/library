@@ -8,6 +8,7 @@ import com.sndshun.library.utils.Result;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 用户信息表(SysUser)表控制层
@@ -25,8 +26,8 @@ public class SysUserController {
     private SysUserService sysUserService;
 
     @GetMapping("page")
-    public Result<PageUtil<SysUser>> page(PageUtil<SysUser> pageUtil) {
-        this.sysUserService.page(pageUtil);
+    public Result<PageUtil<SysUser>> page(PageUtil<SysUser> pageUtil,SysUser sysUser) {
+        this.sysUserService.page(pageUtil,sysUser);
 
         return Result.success(pageUtil);
     }
@@ -43,14 +44,14 @@ public class SysUserController {
     }
 
     @PutMapping
-    public Result<Boolean> update(@RequestBody SysUser sysUser) {
-        return Result.success(this.sysUserService.update(sysUser));
+    public Result<Boolean> update(@RequestBody SysUser sysUser,@RequestHeader String library) {
+        return Result.success(this.sysUserService.update(sysUser,library));
     }
 
 
     @DeleteMapping
-    public Result<Boolean> delete(Integer id) {
-        return Result.success(this.sysUserService.removeById(id));
+    public Result<Boolean> delete(@RequestBody List<Integer> ids) {
+        return Result.success(this.sysUserService.removeById(ids));
     }
 
 }

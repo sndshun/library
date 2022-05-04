@@ -1,5 +1,5 @@
 <template>
-  <home-menu v-model:title="searchForm.title" v-model:searchForm="searchForm" @searchBook="init" />
+  <home-menu @searchBook="init"/>
 
   <div class="container">
     <el-row :gutter="30">
@@ -24,7 +24,7 @@
                 <p>{{ item.likes }}人推荐</p>
                 <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
                 <div class="button">
-                  <el-button>借阅</el-button>
+                  <el-button v-permission="'borrow:add'" :disabled="item.currentNumber<1" @click="borrow(index,item.id)">借阅</el-button>
                 </div>
               </div>
             </div>
@@ -161,11 +161,11 @@
 
         </el-card>
 
-        <el-card style="margin: 10px 0;">
-          <div style="height: 30px;">
-            <span>上月借阅排行</span>
-          </div>
-        </el-card>
+<!--        <el-card style="margin: 10px 0;">-->
+<!--          <div style="height: 30px;">-->
+<!--            <span>上月借阅排行</span>-->
+<!--          </div>-->
+<!--        </el-card>-->
 
       </el-col>
       <el-col :span="2" class="hidden-sm-and-down"></el-col>
@@ -181,18 +181,16 @@
 import {getAllTags, getBooks, getBookTypeList, hotTags} from "../api/book";
 import {onBeforeMount, reactive, ref} from "vue";
 import HomeMenu from "../components/LibraryHeader.vue";
-import {useRoute} from "vue-router";
+import {sysStore, userStore} from "../store";
+import {addBorrow} from "../api/user";
+import {ElMessage} from "element-plus";
 
-const route=useRoute()
 onBeforeMount(() => {
-  searchForm.title= route.query.title
   init()
   getBookType()
   getHotTags()
   getAllTag()
 })
-
-
 
 
 const book = ref({
@@ -225,7 +223,6 @@ const books = reactive({
   pages: 0
 })
 const init = () => {
-
   let params = {
     ...page,
     ...searchForm
@@ -245,43 +242,15 @@ const init = () => {
 }
 
 //----------------------------------------------------------------------------- 查询条件
-// const tagLoading = ref(false)
-// const bookTagOptions = ref([])
-// const remoteMethod = (query) => {
-//   tagLoading.value = true
-//   if (query) {
-//     // bookTagOptions.value = bookTagList.value.filter((item) => {
-//     //   return item.tagName.toLowerCase().includes(query.toLowerCase())
-//     // })
-//     getBookTagList({tagName: query}).then(res => {
-//       bookTagOptions.value = res.data
-//       tagLoading.value = false
-//     })
-//   } else {
-//     bookTagOptions.value = []
-//     tagLoading.value = false
-//   }
-// }
+
 const bookTypeList = ref([])
 const getBookType = () => {
   getBookTypeList().then(res => {
     bookTypeList.value = res.data
   })
 }
-// const search = ref(null)
-const searchForm = reactive({
-  title: null,
-  author: null,
-  brand: null,
-  isbn10: null,
-  isbn13: null,
-  bookType: null,
-  tagId: [],
-})
-// const resetSearch = (form) => {
-//   form.resetFields()
-//   init()
-// }
+const {searchForm} = sysStore()
+
 //--------------------------------------------- 标签
 const hotTagsData = ref()
 const getHotTags = () => {
@@ -318,7 +287,21 @@ const handleCurrentChange = (val) => {
   page.current = val
   init()
 }
+//----------------------------------------------------------------------------- 借阅
+const {userInfo}=userStore()
+const borrow=(index,id)=>{
+  addBorrow(books.list[index].currentNumber,{
+    bookId:id,
+    userId:userInfo.id,
+    createBy:userInfo.id,
+  }).then(res=>{
+    if(res.code===200){
+      books.list[index].currentNumber--
+      ElMessage.success('借阅成功')
+    }
+  })
 
+}
 </script>
 
 <style lang="less" scoped>

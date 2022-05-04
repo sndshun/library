@@ -3,7 +3,7 @@
 <mapper namespace="com.sndshun.library.mapper.SysUserMapper">
 
     <resultMap type="com.sndshun.library.entity.SysUser" id="SysUserMap">
-        <result property="id" column="id" jdbcType="INTEGER"/>
+        <id property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="INTEGER"/>
@@ -12,6 +12,10 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="email" column="email" jdbcType="VARCHAR"/>
         <result property="profile" column="profile" jdbcType="VARCHAR"/>
+        <collection property="roles" ofType="com.sndshun.library.entity.SysUserRole" javaType="java.util.Set">
+            <id property="id" column="rid" jdbcType="INTEGER"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+        </collection>
     </resultMap>
 
     <!--查询单个-->
@@ -31,22 +35,67 @@
 
     <!--查询总量-->
     <select id="queryCount" resultType="int">
-        select count(*)
-        from library.sys_user
-        where id > -1
+        select count(DISTINCT u.id)
+        from library.sys_user u
+        LEFT JOIN sys_user_role ur on ur.user_id=u.id
+        LEFT JOIN sys_role r on r.id=ur.role_id
+        <where>
+            u.id > -1
+            <if test="vo.roleId != null">
+                and ur.role_id = #{vo.roleId}
+            </if>
+            <if test="vo.name != null and vo.name != ''">
+                and u.name like concat('%',#{vo.name},'%')
+            </if>
+            <if test="vo.phone != null and vo.phone != ''">
+                and u.phone = #{vo.phone}
+            </if>
+            <if test="vo.sex != null">
+                and u.sex = #{vo.sex}
+            </if>
+            <if test="vo.address != null and vo.address != ''">
+                and u.address like concat('%',#{vo.address},'%')
+            </if>
+            <if test="vo.email != null and vo.email != ''">
+                and u.email = #{vo.email}
+            </if>
+        </where>
     </select>
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="SysUserMap">
-        select id,
-               name,
-               phone,
-               sex,
-               address,
-               update_time,
-               create_time,
-               email,
-               profile
-        from library.sys_user
+        select u.id,
+               u.name,
+               u.phone,
+               u.sex,
+               u.address,
+               u.email,
+               u.profile,
+                ur.id rid,
+                r.description
+        from library.sys_user u
+        LEFT JOIN sys_user_role ur on ur.user_id=u.id
+        LEFT JOIN sys_role r on r.id=ur.role_id
+        <where>
+            <if test="vo.roleId != null">
+                and ur.role_id = #{vo.roleId}
+            </if>
+            <if test="vo.name != null and vo.name != ''">
+                and u.name like concat('%',#{vo.name},'%')
+            </if>
+            <if test="vo.phone != null and vo.phone != ''">
+                and u.phone = #{vo.phone}
+            </if>
+            <if test="vo.sex != null">
+                and u.sex = #{vo.sex}
+            </if>
+            <if test="vo.address != null and vo.address != ''">
+                and u.address like concat('%',#{vo.address},'%')
+            </if>
+            <if test="vo.email != null and vo.email != ''">
+                and u.email = #{vo.email}
+            </if>
+        </where>
+        order by u.id
         limit #{ew.start}, #{ew.size}
     </select>
 
@@ -202,6 +251,14 @@
         delete
         from library.sys_user
         where id = #{id}
+    </delete>
+    <delete id="deleteBatch">
+        delete
+        from library.sys_user
+        where id in
+        <foreach collection="entities" item="entity" separator="," open="(" close=")">
+            #{entity}
+        </foreach>
     </delete>
 
 </mapper>
