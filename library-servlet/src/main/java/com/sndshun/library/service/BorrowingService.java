@@ -28,7 +28,7 @@ public interface BorrowingService {
      * @param id 主键
      * @return 实例对象
      */
-    Borrowing getById(Integer id);
+    Borrowing getById(Long id);
 
     /**
      * 通过实体作为筛选条件查询
@@ -43,7 +43,7 @@ public interface BorrowingService {
      *
      * @param page 分页工具类
      */
-    void page(PageUtil<Borrowing> page,String title,String name);
+    void page(PageUtil<Borrowing> page,Long id,String title,Integer state);
 
     /**
      * 新增数据
@@ -51,7 +51,7 @@ public interface BorrowingService {
      * @param borrowing 实例对象
      * @return 实例对象
      */
-    boolean save(Borrowing borrowing,Integer currentNumber);
+    boolean save(Borrowing borrowing);
 
     /**
      * 修改数据

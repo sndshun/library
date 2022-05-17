@@ -12,7 +12,7 @@
             </el-form-item>
             <el-form-item prop="username"
                           :rules="[
-                        {required: true, message: '请输入账号', trigger: 'blur'},
+                        {required: true, message: '请输入账号或注册邮箱', trigger: 'blur'},
                         {min:3, message: '账户最少3个字符', trigger: 'blur'},
                         {max: 22, message: '账户长度过长', trigger: 'blur'}
                     ]"
@@ -118,8 +118,10 @@ function handleSubmit() {
   position: fixed;
   width: 100%;
   height: 100%;
-  background: url('../assets/img/background.svg') no-repeat;
-  background-size: cover;
+  /*background: url('../assets/img/background.svg') no-repeat;*/
+  /*background-size: cover;*/
+  background: url('../assets/img/bg-opt1.png') no-repeat;
+  background-size: auto 100%;
 }
 
 

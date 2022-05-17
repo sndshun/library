@@ -104,9 +104,9 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public boolean removeById(List<Integer> ids) {
         if (ids.size() > 1) {
-            return this.sysUserMapper.deleteBatch(ids)+this.userRoleMapper.deleteBatch(ids)+this.authsMapper.deleteBatch(ids) > 0;
+            return this.sysUserMapper.deleteBatch(ids)+this.userRoleMapper.deleteBatchByUser(ids)+this.authsMapper.deleteBatch(ids) > 0;
         } else {
-            return this.sysUserMapper.deleteById(ids.get(0))+this.userRoleMapper.deleteById(ids.get(0))+this.authsMapper.deleteById(ids.get(0)) > 0;
+            return this.sysUserMapper.deleteById(ids.get(0))+this.userRoleMapper.deleteByUser(ids.get(0))+this.authsMapper.deleteById(ids.get(0)) > 0;
         }
 
     }

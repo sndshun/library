@@ -65,6 +65,13 @@ export const routerList = [
         , hidden: true
     },
     {
+        path: '/buy'
+        , name: '办理借阅'
+        , component: () => import('../views/Buy.vue')
+        , meta: {title: '办理借阅'}
+        , hidden: true
+    },
+    {
         path: '/admin'
         , name: 'admin-dashboard'
         , component: layout
@@ -136,6 +143,22 @@ export const routerList = [
                 , meta: {title: '借阅管理',routerBar: true}
                 , menu: 'borrow'
                 
+            }
+        ]
+    }
+    , {
+        path: '/4'
+        , name: 'admin-credentials'
+        , component: layout
+        , meta: {title: '凭证管理'}
+        , redirect: '/admin/credentials'
+        , children: [
+            {
+                path: '/admin/credentials'
+                , name: '凭证管理'
+                , component: () => import('../views/admin/Credentials.vue')
+                , meta: {title: '凭证管理',routerBar: true}
+                , menu: 'credentials'
             }
         ]
     }

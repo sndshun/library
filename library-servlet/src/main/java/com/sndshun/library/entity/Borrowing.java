@@ -23,7 +23,7 @@ public class Borrowing implements Serializable {
      * 借阅记录id
      */
 
-    private Integer id;
+    private Long id;
     /**
      * 借阅书籍id
      */

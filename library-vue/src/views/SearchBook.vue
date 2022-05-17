@@ -15,16 +15,16 @@
                 <a :href="item.dataHref" target="_blank"><img :src="item.imgUrl" :alt="item.imgDesc"/></a>
               </div>
               <div class="book-content">
-                <h2 class="pointer">{{ item.title }}</h2>
+                <h2 class="pointer" @click="details(item.id)">{{ item.title }}</h2>
                 <h2>{{ item.originTitle }}</h2>
                 <h3>{{ item.subTitle }}</h3>
                 <p>{{ item.author }}</p>
                 <p>{{ item.publisher }}/{{ $filters.formatDate(item.pubdate) }}</p>
                 <p>{{ item.price }}元</p>
-                <p>{{ item.likes }}人推荐</p>
+                <p>{{ item.borrows }}人借阅</p>
                 <p>可借阅数量：{{ item.currentNumber }}/总数量：{{ item.total }}</p>
                 <div class="button">
-                  <el-button v-permission="'borrow:add'" :disabled="item.currentNumber<1" @click="borrow(index,item.id)">借阅</el-button>
+                  <el-button :disabled="item.currentNumber<1" @click="borrow(index,item.id)">借阅</el-button>
                 </div>
               </div>
             </div>
@@ -178,12 +178,13 @@
 </template>
 
 <script setup>
-import {getAllTags, getBooks, getBookTypeList, hotTags} from "../api/book";
-import {onBeforeMount, reactive, ref} from "vue";
+import {getAllTags, getBooks, getBookTypeList,getBookDetail, hotTags} from "../api/book";
+import {onBeforeMount, reactive, ref,nextTick} from "vue";
 import HomeMenu from "../components/LibraryHeader.vue";
 import {sysStore, userStore} from "../store";
 import {addBorrow} from "../api/user";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
+import router from "../router";
 
 onBeforeMount(() => {
   init()
@@ -210,6 +211,13 @@ const book = ref({
   dataHref: "",
   pubdate: "",
 })
+const details = async (id) => {
+  const res = await getBookDetail(id)
+
+  await nextTick(() => {
+    book.value = res.data
+  })
+}
 let page = {
   current: 1,
   size: 10,
@@ -258,6 +266,7 @@ const getHotTags = () => {
     hotTagsData.value = res.data
   })
 }
+
 const allTag = ref([])
 const getAllTag = () => {
   getAllTags().then(res => {
@@ -290,16 +299,25 @@ const handleCurrentChange = (val) => {
 //----------------------------------------------------------------------------- 借阅
 const {userInfo}=userStore()
 const borrow=(index,id)=>{
-  addBorrow(books.list[index].currentNumber,{
-    bookId:id,
-    userId:userInfo.id,
-    createBy:userInfo.id,
-  }).then(res=>{
-    if(res.code===200){
-      books.list[index].currentNumber--
-      ElMessage.success('借阅成功')
-    }
-  })
+  if(userInfo) {
+    addBorrow(books.list[index].currentNumber,{
+      bookId:id,
+      userId:userInfo.id,
+      createBy:userInfo.id,
+    }).then(res=>{
+      if(res.code===200){
+        books.list[index].currentNumber--
+        books.list[index].borrows++
+        ElMessage.success('借阅成功')
+      }else if(res.code===70001){
+        ElMessageBox.alert('请购买借阅卡后再借阅')
+        router.push('/buy')
+      }
+    })
+  }else {
+    ElMessage.warning('请先登录')
+  }
+
 
 }
 </script>

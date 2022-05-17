@@ -1,6 +1,7 @@
 package com.sndshun.library.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.sndshun.library.entity.Borrowing;
 import com.sndshun.library.service.BorrowingService;
 import com.sndshun.library.utils.PageUtil;
@@ -31,21 +32,24 @@ public class BorrowingController {
         return Result.success(borrowingService.borrowingBooks(id));
     }
     @GetMapping("page")
-    public Result<PageUtil<Borrowing>> page(String title,String name,PageUtil<Borrowing> pageUtil) {
-        this.borrowingService.page(pageUtil,title,name);
+    public Result<PageUtil<Borrowing>> page(Long id, String title,Integer state,PageUtil<Borrowing> pageUtil) {
+        this.borrowingService.page(pageUtil,id,title,state);
         return Result.success(pageUtil);
     }
 
     @GetMapping("{id}")
-    public Result<Borrowing> selectOne(@PathVariable Integer id) {
+    public Result<Borrowing> selectOne(@PathVariable Long id) {
         return Result.success(this.borrowingService.getById(id));
     }
 
-
+    @SaCheckPermission("borrowing:add")
     @PostMapping
-    public Result<Boolean> insert(@RequestBody Borrowing borrowing,Integer currentNumber) {
+    public Result<Boolean> insert(@RequestBody Borrowing borrowing) {
         borrowing.setStartTime(new Date());
-        return Result.success(this.borrowingService.save(borrowing,currentNumber));
+        //订单号 自动生成 年月日时分秒+uid
+        String orderNumber = String.valueOf(System.currentTimeMillis())+borrowing.getUserId();
+        borrowing.setId(Long.valueOf(orderNumber));
+        return Result.success(this.borrowingService.save(borrowing));
     }
 
     @PutMapping

@@ -42,6 +42,8 @@ public enum ResultCode {
     DATA_IS_WRONG(50002, "数据有误"),
     DATA_ALREADY_EXISTED(50003, "数据已存在"),
     FILE_NOT_FOUND(50004, "文件未找到"),
+    DATABASE_CONNECTION_ERROR(50005, "数据库连接异常"),
+
 
     /* 接口错误：60001-69999 */
     INTERFACE_INNER_INVOKE_ERROR(60001, "内部系统接口调用异常"),

@@ -602,6 +602,9 @@
             <if test="currentNumber != null">
                 current_number = #{currentNumber},
             </if>
+            <if test="borrows != null">
+                borrows = #{borrows},
+            </if>
             <if test="updateBy != null and updateBy != ''">
                 update_by = #{updateBy},
             </if>

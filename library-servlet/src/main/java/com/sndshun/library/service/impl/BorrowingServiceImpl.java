@@ -40,7 +40,7 @@ public class BorrowingServiceImpl implements BorrowingService {
      * @return 实例对象
      */
     @Override
-    public Borrowing getById(Integer id) {
+    public Borrowing getById(Long id) {
         return this.borrowingMapper.queryById(id);
     }
 
@@ -61,9 +61,9 @@ public class BorrowingServiceImpl implements BorrowingService {
      * @param page 分页工具类
      */
     @Override
-    public void page(PageUtil<Borrowing> page,String title,String name) {
-        page.setTotal(this.borrowingMapper.queryCount(title,name));
-        List<Borrowing> list = this.borrowingMapper.queryAllByLimit(page,title,name);
+    public void page(PageUtil<Borrowing> page,Long id,String title,Integer state) {
+        page.setTotal(this.borrowingMapper.queryCount(id,title,state));
+        List<Borrowing> list = this.borrowingMapper.queryAllByLimit(page,id,title,state);
         page.setList(list);
     }
 
@@ -74,11 +74,15 @@ public class BorrowingServiceImpl implements BorrowingService {
      * @return 实例对象
      */
     @Override
-    public boolean save(Borrowing borrowing,Integer currentNumber) {
-        Book book = new Book();
-        book.setId(borrowing.getBookId());
-        book.setCurrentNumber(currentNumber-1);
-        this.bookMapper.update(book);
+    public boolean save(Borrowing borrowing) {
+        Book book = bookMapper.queryById(borrowing.getBookId());
+
+        Book book1 = new Book();
+        book1.setId(borrowing.getBookId());
+        book1.setCurrentNumber(book.getCurrentNumber()-1);
+        book1.setBorrows(book.getBorrows()+1);
+
+        this.bookMapper.update(book1);
         return this.borrowingMapper.insert(borrowing) > 0;
     }
 
@@ -91,14 +95,24 @@ public class BorrowingServiceImpl implements BorrowingService {
     @Override
     public boolean update(Borrowing borrowing) {
         Book book = borrowing.getBook();
-
-        if(borrowing.getState()==1){
-            book.setCurrentNumber(book.getCurrentNumber()+1);
-            borrowing.setEndTime(new Date());
+        Borrowing borrowing1 = this.borrowingMapper.queryById(borrowing.getId());
+        if(borrowing1.getState()==0||borrowing1.getState()==4){
+            if(borrowing.getState()==1){
+                book.setCurrentNumber(book.getCurrentNumber()+1);
+            }else if(borrowing.getState()==2){
+                book.setCurrentNumber(book.getCurrentNumber()+1);
+            }else if(borrowing.getState()==3){
+                book.setCurrentNumber(book.getCurrentNumber()+1);
+            }
         }else {
-            book.setCurrentNumber(book.getCurrentNumber()-1);
+            if(borrowing.getState()==0||borrowing.getState()==4){
+                book.setCurrentNumber(book.getCurrentNumber()-1);
+            }
         }
 
+
+
+        borrowing.setEndTime(new Date());
         book.setId(borrowing.getBookId());
         this.bookMapper.update(book);
         return this.borrowingMapper.update(borrowing) > 0;

@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import com.sndshun.library.common.config.ResultCode;
 import com.sndshun.library.utils.Result;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,10 +21,10 @@ import java.io.FileNotFoundException;
 public class ExceptionController {
 
 
-    @ExceptionHandler(Exception.class)
-    public Result exception(HttpServletRequest request, Exception e) {
-        return Result.error(ResultCode.ERROR).data(e);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public Result exception(HttpServletRequest request, Exception e) {
+//        return Result.error(ResultCode.ERROR).data(e);
+//    }
 
     @ExceptionHandler(CommonJsonException.class)
     public Result commonJsonException(CommonJsonException jsonException) {
@@ -58,4 +59,6 @@ public class ExceptionController {
     public Result fileNotFoundException() {
         return Result.error(ResultCode.FILE_NOT_FOUND);
     }
+
+
 }

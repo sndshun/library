@@ -96,5 +96,20 @@ public interface SysUserRoleMapper {
      */
     int deleteBatch(@Param("entities") List<Integer> ids);
 
+    /**
+     * 通过主键删除数据
+     *
+     * @param id 主键
+     * @return 影响行数
+     */
+    int deleteByUser(Integer id);
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
+    int deleteBatchByUser(@Param("entities") List<Integer> ids);
+
 }
 
